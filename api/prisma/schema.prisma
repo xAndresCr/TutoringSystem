@@ -11,3 +11,169 @@ generator client {
 datasource db {
   provider = "mysql"
 }
+
+
+
+enum Rol {
+  ADMINISTRADOR
+  PROFESIONAL
+  CLIENTE
+}
+
+enum Modalidad {
+  VIRTUAL
+  PRESENCIAL
+  MIXTA
+}
+
+enum EstadoCita {
+  PENDIENTE
+  ACEPTADA
+  RECHAZADA
+  CANCELADA
+  COMPLETADA
+}
+
+// ---------- USUARIOS ----------
+
+model Usuario {
+  idUsuario          Int                @id @default(autoincrement())
+  nombre             String             @db.VarChar(45)
+  apellidos          String             @db.VarChar(90)
+  correo             String             @unique @db.VarChar(100)
+  password           String             @db.VarChar(255) // hash
+  telefono           String             @db.VarChar(20)
+  estado             Boolean            @default(true) // activo / inactivo
+  rol                Rol
+  fechaRegistro      DateTime           @default(now())
+  fechaActualizacion DateTime           @updatedAt
+  perfil             PerfilProfesional?
+  citasCliente       Cita[]
+  resennas           Resenna[]
+}
+
+model PerfilProfesional {
+  idPerfilProfesional Int                  @id @default(autoincrement())
+  titulo              String               @db.VarChar(100)
+  descripcion         String               @db.VarChar(255)
+  annosExperiencia    Int
+  tarifaBase          Decimal              @db.Decimal(10, 2)
+  disponibilidad      Boolean              @default(true)
+  imagen              String?              @db.VarChar(255)
+  modalidad           Modalidad
+  // Ubicación simple (3 campos)
+  provincia           String               @db.VarChar(60)
+  canton              String               @db.VarChar(60)
+  distrito            String               @db.VarChar(60)
+  idUsuario           Int                  @unique
+  usuario             Usuario              @relation(fields: [idUsuario], references: [idUsuario])
+  servicios           Servicio[]
+  especialidades      EspecialidadPerfil[]
+  citas               Cita[]
+  resennas            Resenna[]
+}
+
+// ---------- SERVICIOS / CATEGORÍAS / ESPECIALIDADES ----------
+
+model Categoria {
+  idCategoria Int        @id @default(autoincrement())
+  nombre      String     @db.VarChar(45)
+  descripcion String     @db.VarChar(255)
+  estado      Boolean    @default(true)
+  servicios   Servicio[] // 1 categoría -> muchos servicios
+}
+
+model Servicio {
+  idServicio      Int                    @id @default(autoincrement())
+  nombre          String                 @db.VarChar(100)
+  descripcion     String                 @db.VarChar(255)
+  precio          Decimal                @db.Decimal(10, 2)
+  duracionMinutos Int                    // antes DATETIME -> ahora minutos
+  estado          Boolean                @default(true)
+  fechaCreacion   DateTime               @default(now())
+  modalidad       Modalidad
+  idProfesional   Int
+  profesional     PerfilProfesional      @relation(fields: [idProfesional], references: [idPerfilProfesional])
+  idCategoria     Int
+  categoria       Categoria              @relation(fields: [idCategoria], references: [idCategoria])
+  especialidades  EspecialidadServicio[]
+  citas           Cita[]
+}
+
+model Especialidad {
+  idEspecialidad Int                    @id @default(autoincrement())
+  nombre         String                 @db.VarChar(100)
+  descripcion    String                 @db.VarChar(255)
+  estado         Boolean                @default(true)
+  servicios      EspecialidadServicio[]
+  perfiles       EspecialidadPerfil[]
+}
+
+// Puente especialidad <-> servicio
+model EspecialidadServicio {
+  idEspecialidad Int
+  idServicio     Int
+  especialidad   Especialidad @relation(fields: [idEspecialidad], references: [idEspecialidad])
+  servicio       Servicio     @relation(fields: [idServicio], references: [idServicio])
+
+  @@id([idEspecialidad, idServicio])
+}
+
+// Puente especialidad <-> perfil profesional
+model EspecialidadPerfil {
+  idEspecialidad      Int
+  idPerfilProfesional Int
+  especialidad        Especialidad      @relation(fields: [idEspecialidad], references: [idEspecialidad])
+  perfil              PerfilProfesional @relation(fields: [idPerfilProfesional], references: [idPerfilProfesional])
+
+  @@id([idEspecialidad, idPerfilProfesional])
+}
+
+// ---------- CITAS ----------
+
+model Cita {
+  idCita                Int               @id @default(autoincrement())
+  fechaCreacion         DateTime          @default(now())
+  fechaSolicitada       DateTime          @db.Date
+  horaInicio            DateTime          @db.Time
+  horaFinalizacion      DateTime          @db.Time
+  descripcionCita       String            @db.VarChar(255) // necesidad / comentario del cliente
+  comentarioProfesional String?           @db.VarChar(255)
+  montoTotal            Decimal           @db.Decimal(10, 2)
+  modalidad             Modalidad
+  estado                EstadoCita        @default(PENDIENTE)
+  idCliente             Int
+  cliente               Usuario           @relation(fields: [idCliente], references: [idUsuario])
+  idProfesional         Int
+  profesional           PerfilProfesional @relation(fields: [idProfesional], references: [idPerfilProfesional])
+  idServicio            Int
+  servicio              Servicio          @relation(fields: [idServicio], references: [idServicio])
+  resenna               Resenna?
+  historial             HistorialCita[]
+}
+
+// Bitácora de cambios de estado (cumple "registrar cambios de estado")
+model HistorialCita {
+  idHistorial Int        @id @default(autoincrement())
+  idCita      Int
+  cita        Cita       @relation(fields: [idCita], references: [idCita])
+  estado      EstadoCita // estado resultante del cambio
+  fechaCambio DateTime   @default(now())
+  comentario  String?    @db.VarChar(255) // motivo / justificación
+}
+
+// ---------- RESEÑAS ----------
+
+model Resenna {
+  idResenna     Int               @id @default(autoincrement())
+  puntuacion    Int               // 1 a 5 (validar en la API)
+  comentario    String            @db.VarChar(255)
+  fecha         DateTime          @default(now())
+  idCita        Int               @unique // 1 reseña por cita
+  cita          Cita              @relation(fields: [idCita], references: [idCita])
+  idCliente     Int
+  cliente       Usuario           @relation(fields: [idCliente], references: [idUsuario])
+  idProfesional Int
+  profesional   PerfilProfesional @relation(fields: [idProfesional], references: [idPerfilProfesional])
+}
+
