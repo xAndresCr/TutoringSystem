@@ -177,3 +177,4 @@ model Resenna {
   profesional   PerfilProfesional @relation(fields: [idProfesional], references: [idPerfilProfesional])
 }
 
+
