@@ -1,0 +1,351 @@
+{
+  "info": {
+    "_postman_id": "d7c1455a-4e4c-4295-8e11-a630a74f0891",
+    "name": "API TurotingSystem 2026",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "7418211"
+  },
+  "item": [
+    {
+      "name": "videojuego",
+      "item": [
+        {
+          "name": "Listar videojuego",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:3000/videojuego",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "videojuego"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar videojuego paginado",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:3000/videojuego?page=2&limit=3",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "videojuego"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "2"
+                },
+                {
+                  "key": "limit",
+                  "value": "3"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener videojuego",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:3000/videojuego/1",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "videojuego",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "categoria",
+      "item": [
+        {
+          "name": "Listar categoria",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:3000/categoria",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "categoria"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener categoria",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:3000/categoria/1",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "categoria",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "etiqueta",
+      "item": [
+        {
+          "name": "Listar etiqueta",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:3000/etiqueta",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "etiqueta"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener etiqueta",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:3000/etiqueta/1",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "etiqueta",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "plataforma",
+      "item": [
+        {
+          "name": "Listar plataforma",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:3000/plataforma",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "plataforma"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener plataforma",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:3000/plataforma/1",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "plataforma",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "orden",
+      "item": [
+        {
+          "name": "Listar orden",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:3000/orden",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "orden"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Listar orden x usuario",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:3000/orden/usuario",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "orden",
+                "usuario"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener orden",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:3000/orden/1",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "orden",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "role",
+      "item": [
+        {
+          "name": "Listar role",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:3000/role",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "role"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener role",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:3000/role/1",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "role",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "estado orden",
+      "item": [
+        {
+          "name": "Listar estado orden",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:3000/estadoOrden",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "estadoOrden"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Obtener estado orden",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "localhost:3000/estadoOrden/PENDIENTE",
+              "host": [
+                "localhost"
+              ],
+              "port": "3000",
+              "path": [
+                "estadoOrden",
+                "PENDIENTE"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
