@@ -7,6 +7,7 @@ export class CategoriaRoutes {
         const controller = categoriaController;
 
         router.get("/", controller.listar);
+        router.patch("/:id/estado", controller.cambiarEstado);
 
         return router;
     }       
