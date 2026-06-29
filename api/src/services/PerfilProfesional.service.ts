@@ -51,16 +51,39 @@ export const profesionalService = {
     return await prisma.perfilProfesional.findUnique({
       where: { idPerfilProfesional },
       select: {
+        // Campos del Perfil Profesional
         titulo: true,
-        modalidad: true,
+        descripcion: true,
+        annosExperiencia: true,
         tarifaBase: true,
         disponibilidad: true,
+        modalidad: true,
+        provincia: true,
+        canton: true,
+        distrito: true,
+        idUsuario: true, // Se mantiene el ID como referencia técnica si se requiere para el estado interno
+        
+        // Relación filtrada: Solo expone nombre, apellidos y correo electrónico
         usuario: {
           select: {
             nombre: true,
             apellidos: true,
+            correo: true
+          }
+        },
+
+        // Especialidades asociadas, aquíe entra a la tabla intermedia
+        especialidades:{
+          select:{
+      // Saltamos el ID de la tabla intermedia y vamos a la relación de la especialidad asociada al profesional
+            especialidad:{
+              select:{
+                nombre: true,
+              }
+            }
           }
         }
+        
       }
     });
   },
