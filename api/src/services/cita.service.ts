@@ -87,7 +87,7 @@ export const citaService = {
             correo: true,
           },
         },
-        perfilProfesional: {
+        profesional: {
           select: {
             titulo: true,
             usuario: {
