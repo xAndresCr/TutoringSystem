@@ -1,5 +1,7 @@
 import { Router } from "express";
 import { citaController } from "../controllers/cita.controller";
+import { validateRequest } from "../middlewares/validate-request.middleware";
+import { createCitaSchema } from "../dtos/cita.dto";
 
 export class CitaRoutes {
   static get routes(): Router {
@@ -13,7 +15,7 @@ export class CitaRoutes {
     router.get("/:id", controller.obtenerPorId);
     
 
-    router.post("/", controller.crear);
+    router.post("/", validateRequest(createCitaSchema), controller.crear);
 
     return router;
   }

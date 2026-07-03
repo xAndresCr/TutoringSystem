@@ -1,5 +1,6 @@
 import { prisma } from "../config/prisma";
 import { Prisma } from "../../generated/prisma/client";
+import { CreateServicioDto, UpdateServicioDto } from "../dtos/servicio.dto";
 
 export const servicioService = {
   // 1. LISTAR SERVICIOS (Con búsqueda por nombre y filtro de estado)
@@ -61,17 +62,34 @@ export const servicioService = {
   },
 
   // 3. CREAR SERVICIO
-  async crear(datos: Prisma.ServicioCreateInput) {
-    return await prisma.servicio.create({
-      data: datos,
-    });
+  async crear(datos: CreateServicioDto) {
+    const { especialidadIds, ...servicio } = datos;
+
+    const data: Prisma.ServicioUncheckedCreateInput = {
+      ...servicio,
+      // Si vienen especialidades, se crean las filas de la tabla puente
+      ...(especialidadIds && especialidadIds.length > 0
+        ? {
+            especialidades: {
+              create: especialidadIds.map((idEspecialidad) => ({
+                especialidad: { connect: { idEspecialidad } },
+              })),
+            },
+          }
+        : {}),
+    };
+
+    return await prisma.servicio.create({ data });
   },
 
   // 4. EDITAR SERVICIO
-  async editar(idServicio: number, datos: Prisma.ServicioUpdateInput) {
+  async editar(idServicio: number, datos: UpdateServicioDto) {
+    // No se re-sincronizan especialidades en la edición (acción aparte)
+    const { especialidadIds, ...servicio } = datos;
+
     return await prisma.servicio.update({
       where: { idServicio },
-      data: datos,
+      data: servicio as Prisma.ServicioUncheckedUpdateInput,
     });
   },
 

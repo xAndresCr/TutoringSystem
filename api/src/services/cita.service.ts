@@ -1,5 +1,7 @@
 import { prisma } from "../config/prisma";
 import { EstadoCita, Prisma } from "../../generated/prisma/client";
+import { AppError } from "../utils/app-error";
+import { CreateCitaDto } from "../dtos/cita.dto";
 
 export const citaService = {
   // 1. LISTAR CITAS CON FILTROS COMBINABLES
@@ -109,16 +111,45 @@ export const citaService = {
   },
 
   // 3. CREAR CITA
-  async crear(datos: Prisma.CitaUncheckedCreateInput) {
+  async crear(datos: CreateCitaDto) {
+    // Validar que el servicio exista y obtener su precio para el monto
+    const servicio = await prisma.servicio.findUnique({
+      where: { idServicio: datos.idServicio },
+    });
+    if (!servicio) {
+      throw AppError.notFound("El servicio indicado no existe");
+    }
+
+    // Evitar doble reserva: mismo profesional, misma fecha y misma hora de inicio,
+    // en citas todavía activas (Pendiente o Aceptada)
+    const conflicto = await prisma.cita.findFirst({
+      where: {
+        idProfesional: datos.idProfesional,
+        fechaSolicitada: datos.fechaSolicitada,
+        horaInicio: datos.horaInicio,
+        estado: { in: [EstadoCita.PENDIENTE, EstadoCita.ACEPTADA] },
+      },
+    });
+    if (conflicto) {
+      throw AppError.conflict(
+        "El profesional ya tiene una cita en esa fecha y hora"
+      );
+    }
+
     return await prisma.cita.create({
       data: {
-        ...datos,
-        // Convertimos las fechas enviadas por el DTO a instancias válidas de Date
-        fechaSolicitada: new Date(datos.fechaSolicitada),
-        horaInicio: new Date(datos.horaInicio),
-        horaFinalizacion: new Date(datos.horaFinalizacion),
-        // Forzamos el estado por requerimiento obligatorio de la rúbrica
-        estado: EstadoCita.PENDIENTE, 
+        fechaSolicitada: datos.fechaSolicitada,
+        horaInicio: datos.horaInicio,
+        horaFinalizacion: datos.horaFinalizacion,
+        descripcionCita: datos.descripcionCita,
+        modalidad: datos.modalidad,
+        idCliente: datos.idCliente,
+        idProfesional: datos.idProfesional,
+        idServicio: datos.idServicio,
+        // El backend calcula el monto según el servicio (requisito del enunciado)
+        montoTotal: servicio.precio,
+        // Estado inicial forzado por la rúbrica
+        estado: EstadoCita.PENDIENTE,
       },
     });
   },

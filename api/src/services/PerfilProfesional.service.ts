@@ -1,5 +1,9 @@
 import { prisma } from "../config/prisma";
 import { Prisma } from "../../generated/prisma/client";
+import {
+  CreatePerfilProfesionalDto,
+  UpdatePerfilProfesionalDto,
+} from "../dtos/perfilProfesional.dto";
 
 export const profesionalService = {
   // 1. LISTAR CON FILTROS Y RELACIÓN 
@@ -89,17 +93,37 @@ export const profesionalService = {
   },
 
   // 3. CREAR 
-  async crear(datos: Prisma.PerfilProfesionalCreateInput) {
-    return await prisma.perfilProfesional.create({
-      data: datos,
-    });
+  async crear(datos: CreatePerfilProfesionalDto) {
+    const { especialidadIds, ...perfil } = datos;
+
+    const data: Prisma.PerfilProfesionalUncheckedCreateInput = {
+      ...perfil,
+      // Si vienen especialidades, se crean las filas de la tabla puente EspecialidadPerfil
+      ...(especialidadIds && especialidadIds.length > 0
+        ? {
+            especialidades: {
+              create: especialidadIds.map((idEspecialidad) => ({
+                especialidad: { connect: { idEspecialidad } },
+              })),
+            },
+          }
+        : {}),
+    };
+
+    return await prisma.perfilProfesional.create({ data });
   },
 
   // 4. EDITAR
-  async editar(idPerfilProfesional: number, datos: Prisma.PerfilProfesionalUpdateInput) {
+  async editar(
+    idPerfilProfesional: number,
+    datos: UpdatePerfilProfesionalDto
+  ) {
+    // No se re-sincronizan especialidades en la edición (acción aparte)
+    const { especialidadIds, ...perfil } = datos;
+
     return await prisma.perfilProfesional.update({
       where: { idPerfilProfesional },
-      data: datos,
+      data: perfil as Prisma.PerfilProfesionalUncheckedUpdateInput,
     });
   },
 

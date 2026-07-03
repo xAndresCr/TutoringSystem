@@ -1,5 +1,10 @@
 import { Router } from "express";
 import { profesionalController } from "../controllers/perfilprofessional.controller";
+import { validateRequest } from "../middlewares/validate-request.middleware";
+import {
+  createPerfilProfesionalSchema,
+  updatePerfilProfesionalSchema,
+} from "../dtos/perfilProfesional.dto";
 
 export class ProfesionalRoutes {
   static get routes(): Router {
@@ -8,8 +13,16 @@ export class ProfesionalRoutes {
 
     router.get("/", controller.listar);
     router.get("/:id", controller.obtenerPorId);
-    router.post("/", controller.crear);
-    router.put("/:id", controller.editar);
+    router.post(
+      "/",
+      validateRequest(createPerfilProfesionalSchema),
+      controller.crear
+    );
+    router.put(
+      "/:id",
+      validateRequest(updatePerfilProfesionalSchema),
+      controller.editar
+    );
     router.patch("/:id/disponibilidad", controller.cambiarDisponibilidad);
 
     return router;
