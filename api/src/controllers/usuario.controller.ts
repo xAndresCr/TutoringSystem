@@ -8,16 +8,16 @@ export const usuarioController = {
     try {
       const { search, rolUsuario } = req.query;
 
-      // 1. Hacemos que 'rolUsuario' sea opcional (?) en el tipado para evitar el error de compilación
-      const filtros: { search?: string; rolUsuario?: Rol } = {};
+      // El service espera la clave 'rol'
+      const filtros: { search?: string; rol?: Rol } = {};
 
       if (typeof search === "string" && search.trim() !== "") {
         filtros.search = search.trim();
       }
 
-      // 2. Validamos que el rol recibido en la query realmente pertenezca al Enum de Prisma antes de asignarlo
+      // Validamos que el rol recibido en la query realmente pertenezca al Enum de Prisma antes de asignarlo
       if (typeof rolUsuario === "string" && Object.values(Rol).includes(rolUsuario as Rol)) {
-        filtros.rolUsuario = rolUsuario as Rol;
+        filtros.rol = rolUsuario as Rol;
       }
 
       const usuarios = await usuarioService.listar(filtros);

@@ -6,14 +6,34 @@ export const servicioController = {
   // 1. LISTAR
   listar: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { search, estado } = req.query;
-      const filtros: { search?: string; estado?: boolean } = {};
+      const { search, estado, idCategoria, modalidad, precioMin, precioMax } = req.query;
+      const filtros: {
+        search?: string;
+        estado?: boolean;
+        idCategoria?: number;
+        modalidad?: string;
+        precioMin?: number;
+        precioMax?: number;
+      } = {};
 
       if (typeof search === "string" && search.trim() !== "") {
         filtros.search = search.trim();
       }
       if (estado === "true") filtros.estado = true;
       else if (estado === "false") filtros.estado = false;
+
+      if (idCategoria && !isNaN(Number(idCategoria))) {
+        filtros.idCategoria = Number(idCategoria);
+      }
+      if (typeof modalidad === "string" && modalidad.trim() !== "") {
+        filtros.modalidad = modalidad.trim();
+      }
+      if (precioMin && !isNaN(Number(precioMin))) {
+        filtros.precioMin = Number(precioMin);
+      }
+      if (precioMax && !isNaN(Number(precioMax))) {
+        filtros.precioMax = Number(precioMax);
+      }
 
       const servicios = await servicioService.listar(filtros);
       return res.status(StatusCodes.OK).json({ success: true, data: servicios });

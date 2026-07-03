@@ -3,13 +3,37 @@ import { Prisma } from "../../generated/prisma/client";
 import { CreateServicioDto, UpdateServicioDto } from "../dtos/servicio.dto";
 
 export const servicioService = {
-  // 1. LISTAR SERVICIOS (Con búsqueda por nombre y filtro de estado)
-  async listar(filtros: { search?: string; estado?: boolean }) {
+  // 1. LISTAR SERVICIOS (búsqueda por nombre y filtros por categoría, modalidad, rango de precio y estado)
+  async listar(filtros: {
+    search?: string;
+    estado?: boolean;
+    idCategoria?: number;
+    modalidad?: string;
+    precioMin?: number;
+    precioMax?: number;
+  }) {
     const where: Prisma.ServicioWhereInput = {};
 
     // Filtro por estado activo/inactivo
     if (filtros.estado !== undefined) {
       where.estado = filtros.estado;
+    }
+
+    // Filtro por categoría
+    if (filtros.idCategoria) {
+      where.idCategoria = filtros.idCategoria;
+    }
+
+    // Filtro por modalidad
+    if (filtros.modalidad) {
+      where.modalidad = filtros.modalidad as any;
+    }
+
+    // Filtro por rango de precio
+    if (filtros.precioMin !== undefined || filtros.precioMax !== undefined) {
+      where.precio = {};
+      if (filtros.precioMin !== undefined) where.precio.gte = filtros.precioMin;
+      if (filtros.precioMax !== undefined) where.precio.lte = filtros.precioMax;
     }
 
     // Búsqueda por coincidencia en el nombre o descripción del servicio
@@ -25,17 +49,28 @@ export const servicioService = {
       orderBy: {
         nombre: "asc",
       },
-      // Proyección para retornar solo los datos limpios y su relación
+      // Columnas que pide el listado: Nombre, Profesional, Categoría, Precio, Modalidad, Estado
       select: {
         idServicio: true,
         nombre: true,
-        descripcion: true,
+        precio: true,
+        modalidad: true,
         estado: true,
-        // Incluimos la categoría a la que pertenece el servicio
         categoria: {
           select: {
             idCategoria: true,
             nombre: true
+          }
+        },
+        profesional: {
+          select: {
+            titulo: true,
+            usuario: {
+              select: {
+                nombre: true,
+                apellidos: true
+              }
+            }
           }
         }
       }
@@ -50,11 +85,37 @@ export const servicioService = {
         idServicio: true,
         nombre: true,
         descripcion: true,
+        precio: true,
+        duracionMinutos: true,
+        modalidad: true,
         estado: true,
         categoria: {
           select: {
             idCategoria: true,
             nombre: true
+          }
+        },
+        profesional: {
+          select: {
+            idPerfilProfesional: true,
+            titulo: true,
+            usuario: {
+              select: {
+                nombre: true,
+                apellidos: true
+              }
+            }
+          }
+        },
+        // Especialidades asociadas vía tabla puente
+        especialidades: {
+          select: {
+            especialidad: {
+              select: {
+                idEspecialidad: true,
+                nombre: true
+              }
+            }
           }
         }
       }

@@ -43,7 +43,7 @@ export const citaService = {
           },
         },
         // Relación al perfil profesional (vía idProfesional)
-        perfilProfesional: {
+        profesional: {
           select: {
             titulo: true,
             usuario: {
@@ -118,6 +118,22 @@ export const citaService = {
     });
     if (!servicio) {
       throw AppError.notFound("El servicio indicado no existe");
+    }
+
+    // Validar que el cliente exista (selección válida de entidades relacionadas)
+    const cliente = await prisma.usuario.findUnique({
+      where: { idUsuario: datos.idCliente },
+    });
+    if (!cliente) {
+      throw AppError.notFound("El cliente indicado no existe");
+    }
+
+    // Validar que el profesional exista
+    const profesional = await prisma.perfilProfesional.findUnique({
+      where: { idPerfilProfesional: datos.idProfesional },
+    });
+    if (!profesional) {
+      throw AppError.notFound("El profesional indicado no existe");
     }
 
     // Evitar doble reserva: mismo profesional, misma fecha y misma hora de inicio,

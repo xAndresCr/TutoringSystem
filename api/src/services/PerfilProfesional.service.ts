@@ -1,5 +1,7 @@
 import { prisma } from "../config/prisma";
-import { Prisma } from "../../generated/prisma/client";
+import { Prisma, Rol } from "../../generated/prisma/client";
+import bcrypt from "bcryptjs";
+import { AppError } from "../utils/app-error";
 import {
   CreatePerfilProfesionalDto,
   UpdatePerfilProfesionalDto,
@@ -92,25 +94,51 @@ export const profesionalService = {
     });
   },
 
-  // 3. CREAR 
+  // 3. CREAR (Usuario rol PROFESIONAL + su Perfil, en una sola operación)
   async crear(datos: CreatePerfilProfesionalDto) {
-    const { especialidadIds, ...perfil } = datos;
+    const { nombre, apellidos, correo, telefono, password, especialidadIds, ...perfil } =
+      datos;
 
-    const data: Prisma.PerfilProfesionalUncheckedCreateInput = {
-      ...perfil,
-      // Si vienen especialidades, se crean las filas de la tabla puente EspecialidadPerfil
-      ...(especialidadIds && especialidadIds.length > 0
-        ? {
-            especialidades: {
-              create: especialidadIds.map((idEspecialidad) => ({
-                especialidad: { connect: { idEspecialidad } },
-              })),
-            },
-          }
-        : {}),
-    };
+    // Correo único
+    const correoNormalizado = correo.toLowerCase();
+    const existente = await prisma.usuario.findUnique({
+      where: { correo: correoNormalizado },
+    });
+    if (existente) {
+      throw AppError.conflict("Ya existe un usuario registrado con ese correo");
+    }
 
-    return await prisma.perfilProfesional.create({ data });
+    // Hash de la contraseña (auth se implementa en etapas siguientes)
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    return await prisma.usuario.create({
+      data: {
+        nombre,
+        apellidos,
+        correo: correoNormalizado,
+        telefono,
+        password: passwordHash,
+        rol: Rol.PROFESIONAL,
+        // Nested create: crea el perfil junto con el usuario (transaccional por defecto)
+        perfil: {
+          create: {
+            ...perfil,
+            ...(especialidadIds && especialidadIds.length > 0
+              ? {
+                  especialidades: {
+                    create: especialidadIds.map((idEspecialidad) => ({
+                      especialidad: { connect: { idEspecialidad } },
+                    })),
+                  },
+                }
+              : {}),
+          },
+        },
+      },
+      // No devolvemos el hash de la contraseña
+      omit: { password: true },
+      include: { perfil: true },
+    });
   },
 
   // 4. EDITAR
