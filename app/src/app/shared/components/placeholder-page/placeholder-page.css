@@ -1,0 +1,14 @@
+.placeholder {
+  max-width: 34rem;
+  margin: 3rem auto;
+  padding: 2.5rem;
+  text-align: center;
+}
+.placeholder mat-icon {
+  font-size: 3rem;
+  width: 3rem;
+  height: 3rem;
+  color: var(--mat-sys-primary);
+}
+.placeholder h2 { margin: 1rem 0 0.5rem; }
+.placeholder p { margin: 0; opacity: 0.75; }
