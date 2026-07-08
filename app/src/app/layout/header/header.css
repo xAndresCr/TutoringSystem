@@ -2,6 +2,7 @@
     position: sticky;
     top: 0;
     z-index: 50;
+    -webkit-backdrop-filter: blur(16px);
     backdrop-filter: blur(16px);
     background: color-mix(in srgb, var(--mat-sys-surface) 86%, transparent);
     border-bottom: 1px solid color-mix(in srgb, var(--mat-sys-outline) 22%, transparent);

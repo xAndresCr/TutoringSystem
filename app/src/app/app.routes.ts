@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { MainLayout } from './layout/main-layout/main-layout';
 import { Home } from './pages/home/home';
 import { PlaceholderPage } from './shared/components/placeholder-page/placeholder-page';
+import { CategoriasList } from './pages/categorias/categorias-list/categorias-list';
 
 export const routes: Routes = [
   {
@@ -18,7 +19,7 @@ export const routes: Routes = [
       // Administración / mantenimientos
       { path: 'admin/profesionales', component: PlaceholderPage, title: 'Gestión de profesionales' },
       { path: 'admin/servicios', component: PlaceholderPage, title: 'Gestión de servicios' },
-      { path: 'admin/categorias', component: PlaceholderPage, title: 'Gestión de categorías' },
+      { path: 'admin/categorias', component: CategoriasList, title: 'Gestión de categorías' },
       { path: 'admin/especialidades', component: PlaceholderPage, title: 'Gestión de especialidades' },
       { path: 'admin/citas', component: PlaceholderPage, title: 'Gestión de citas' },
       { path: 'admin/usuarios', component: PlaceholderPage, title: 'Gestión de usuarios' },
