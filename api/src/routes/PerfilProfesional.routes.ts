@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { profesionalController } from "../controllers/perfilprofessional.controller";
+import { profesionalController } from "../controllers/PerfilProfessional.controller";
 import { validateRequest } from "../middlewares/validate-request.middleware";
 import {
   createPerfilProfesionalSchema,
