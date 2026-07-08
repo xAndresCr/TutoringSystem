@@ -28,18 +28,24 @@ export interface EspecialidadPerfil {
 }
 
 export interface PerfilProfesionalCreateDto {
+  // Datos del usuario (rol PROFESIONAL) — el backend crea usuario + perfil juntos (A2)
+  nombre: string;
+  apellidos: string;
+  correo: string;
+  telefono: string;
+  password: string;
+  // Datos del perfil
   titulo: string;
   descripcion: string;
   annosExperiencia: number;
   tarifaBase: number;
-  disponibilidad: boolean;
+  disponibilidad?: boolean;
   imagen?: string | null;
   modalidad: Modalidad;
   provincia: string;
   canton: string;
   distrito: string;
-  idUsuario: number;
-  especialidades?: number[]; // ids de especialidades
+  especialidadIds?: number[]; // ids de especialidades
 }
 
 export interface PerfilProfesionalUpdateDto {
@@ -53,5 +59,5 @@ export interface PerfilProfesionalUpdateDto {
   provincia?: string;
   canton?: string;
   distrito?: string;
-  especialidades?: number[];
+  especialidadIds?: number[];
 }

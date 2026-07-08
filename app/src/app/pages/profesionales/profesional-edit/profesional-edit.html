@@ -1,0 +1,104 @@
+<div class="page">
+  <div class="form-top">
+    <a mat-stroked-button routerLink="/admin/profesionales">
+      <mat-icon>arrow_back</mat-icon> Volver
+    </a>
+  </div>
+
+  @if (cargando()) {
+    <div class="state"><mat-spinner [diameter]="40"></mat-spinner></div>
+  } @else {
+    <mat-card class="form-card">
+      <h1>Editar profesional</h1>
+
+      <form [formGroup]="form" (ngSubmit)="guardar()">
+        <div class="grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Título profesional</mat-label>
+            <input matInput formControlName="titulo" maxlength="100" />
+            @if (form.controls.titulo.hasError('required')) {
+              <mat-error>El título es obligatorio</mat-error>
+            } @else if (form.controls.titulo.hasError('minlength')) {
+              <mat-error>Mínimo 3 caracteres</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Modalidad</mat-label>
+            <mat-select formControlName="modalidad">
+              <mat-option value="VIRTUAL">Virtual</mat-option>
+              <mat-option value="PRESENCIAL">Presencial</mat-option>
+              <mat-option value="MIXTA">Mixta</mat-option>
+            </mat-select>
+            @if (form.controls.modalidad.hasError('required')) {
+              <mat-error>La modalidad es obligatoria</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Años de experiencia</mat-label>
+            <input matInput type="number" formControlName="annosExperiencia" min="0" max="80" />
+            @if (form.controls.annosExperiencia.hasError('required')) {
+              <mat-error>Campo obligatorio</mat-error>
+            } @else if (form.controls.annosExperiencia.hasError('min') || form.controls.annosExperiencia.hasError('max')) {
+              <mat-error>Debe estar entre 0 y 80</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Tarifa base (₡)</mat-label>
+            <input matInput type="number" formControlName="tarifaBase" min="0" step="0.01" />
+            @if (form.controls.tarifaBase.hasError('required')) {
+              <mat-error>La tarifa es obligatoria</mat-error>
+            } @else if (form.controls.tarifaBase.hasError('min')) {
+              <mat-error>La tarifa debe ser mayor a 0</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Provincia</mat-label>
+            <input matInput formControlName="provincia" maxlength="60" />
+            @if (form.controls.provincia.hasError('required')) {
+              <mat-error>La provincia es obligatoria</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Cantón</mat-label>
+            <input matInput formControlName="canton" maxlength="60" />
+            @if (form.controls.canton.hasError('required')) {
+              <mat-error>El cantón es obligatorio</mat-error>
+            }
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Distrito</mat-label>
+            <input matInput formControlName="distrito" maxlength="60" />
+            @if (form.controls.distrito.hasError('required')) {
+              <mat-error>El distrito es obligatorio</mat-error>
+            }
+          </mat-form-field>
+        </div>
+
+        <mat-form-field appearance="outline" class="full">
+          <mat-label>Descripción</mat-label>
+          <textarea matInput formControlName="descripcion" rows="3" maxlength="255"></textarea>
+          @if (form.controls.descripcion.hasError('required')) {
+            <mat-error>La descripción es obligatoria</mat-error>
+          } @else if (form.controls.descripcion.hasError('minlength')) {
+            <mat-error>Mínimo 10 caracteres</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-checkbox formControlName="disponibilidad">Disponible para recibir citas</mat-checkbox>
+
+        <div class="actions">
+          <a mat-stroked-button routerLink="/admin/profesionales">Cancelar</a>
+          <button mat-flat-button color="primary" type="submit" [disabled]="guardando()">
+            <mat-icon>save</mat-icon> Guardar cambios
+          </button>
+        </div>
+      </form>
+    </mat-card>
+  }
+</div>

@@ -26,6 +26,7 @@ export const usuarioService = {
         //Este select ayuda a traer unicamente lo que pide el enunciado
 
         select: {
+            idUsuario: true,
             nombre: true,
             apellidos: true,
             correo: true,

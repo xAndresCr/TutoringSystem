@@ -7,14 +7,15 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { CategoriaService } from '../../../../core/services/categoria.service';
+import { UsuarioService } from '../../../../core/services/usuario.service';
 import { NotificationService } from '../../../../core/services/notification.service';
-import { Categoria } from '../../../../core/models/categoria.model';
+import { Usuario } from '../../../../core/models/usuario.model';
+import { Rol } from '../../../../core/models/enums.model';
 
-type EstadoFiltro = 'todos' | 'true' | 'false';
+type RolFiltro = Rol | 'todos';
 
 @Component({
-  selector: 'app-categorias-list',
+  selector: 'app-usuarios-list',
   standalone: true,
   imports: [
     FormsModule,
@@ -26,18 +27,18 @@ type EstadoFiltro = 'todos' | 'true' | 'false';
     MatIconModule,
     MatProgressSpinnerModule,
   ],
-  templateUrl: './categorias-list.html',
-  styleUrl: './categorias-list.css',
+  templateUrl: './usuarios-list.html',
+  styleUrl: './usuarios-list.css',
 })
-export class CategoriasList implements OnInit {
-  private categoriaService = inject(CategoriaService);
+export class UsuariosList implements OnInit {
+  private usuarioService = inject(UsuarioService);
   private notif = inject(NotificationService);
 
-  categorias = signal<Categoria[]>([]);
+  usuarios = signal<Usuario[]>([]);
   loading = signal(false);
   search = signal('');
-  estadoFiltro = signal<EstadoFiltro>('todos');
-  displayedColumns = ['nombre', 'descripcion', 'estado', 'acciones'];
+  rolFiltro = signal<RolFiltro>('todos');
+  displayedColumns = ['nombre', 'correo', 'rol', 'estado', 'acciones'];
 
   ngOnInit(): void {
     this.cargar();
@@ -46,35 +47,32 @@ export class CategoriasList implements OnInit {
   cargar(): void {
     this.loading.set(true);
 
-    const filtros: { search?: string; estado?: boolean } = {};
+    const filtros: { search?: string; rol?: Rol } = {};
     const s = this.search().trim();
     if (s) filtros.search = s;
-    if (this.estadoFiltro() !== 'todos') {
-      filtros.estado = this.estadoFiltro() === 'true';
-    }
+    if (this.rolFiltro() !== 'todos') filtros.rol = this.rolFiltro() as Rol;
 
-    this.categoriaService.listar(filtros).subscribe({
+    this.usuarioService.listar(filtros).subscribe({
       next: (res) => {
-        this.categorias.set(res.data);
+        this.usuarios.set(res.data);
         this.loading.set(false);
       },
       error: () => {
         this.loading.set(false);
-        this.notif.error('No se pudieron cargar las categorías');
+        this.notif.error('No se pudieron cargar los usuarios');
       },
     });
   }
 
-  cambiarEstado(categoria: Categoria): void {
-    const accion = categoria.estado ? 'desactivar' : 'activar';
-    if (!confirm(`¿Seguro que deseas ${accion} la categoría "${categoria.nombre}"?`)) {
+  cambiarEstado(usuario: Usuario): void {
+    const accion = usuario.estado ? 'desactivar' : 'activar';
+    if (!confirm(`¿Seguro que deseas ${accion} a ${usuario.nombre} ${usuario.apellidos}?`)) {
       return;
     }
 
-    this.categoriaService.cambiarEstado(categoria.idCategoria).subscribe({
+    this.usuarioService.cambiarEstado(usuario.idUsuario).subscribe({
       next: (res) => {
-        this.notif.success(`Categoría ${res.data.estado ? 'activada' : 'desactivada'}`);
-        // Recargamos para respetar el filtro de estado activo
+        this.notif.success(`Usuario ${res.data.estado ? 'activado' : 'desactivado'}`);
         this.cargar();
       },
       error: () => this.notif.error('No se pudo cambiar el estado'),

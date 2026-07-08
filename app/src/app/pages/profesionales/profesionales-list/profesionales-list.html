@@ -1,0 +1,112 @@
+<div class="page">
+  <header class="page-header">
+    <div>
+      <h1>Profesionales</h1>
+      <p>Administra los perfiles profesionales del marketplace.</p>
+    </div>
+    <a mat-flat-button color="primary" routerLink="/admin/profesionales/crear">
+      <mat-icon>add</mat-icon> Nuevo profesional
+    </a>
+  </header>
+
+  <div class="filters">
+    <mat-form-field appearance="outline">
+      <mat-label>Buscar por nombre</mat-label>
+      <input
+        matInput
+        [ngModel]="search()"
+        (ngModelChange)="search.set($event)"
+        (keyup.enter)="cargar()" />
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Modalidad</mat-label>
+      <mat-select
+        [ngModel]="modalidadFiltro()"
+        (ngModelChange)="modalidadFiltro.set($event); cargar()">
+        <mat-option value="todos">Todas</mat-option>
+        <mat-option value="VIRTUAL">Virtual</mat-option>
+        <mat-option value="PRESENCIAL">Presencial</mat-option>
+        <mat-option value="MIXTA">Mixta</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Disponibilidad</mat-label>
+      <mat-select
+        [ngModel]="disponibilidadFiltro()"
+        (ngModelChange)="disponibilidadFiltro.set($event); cargar()">
+        <mat-option value="todos">Todos</mat-option>
+        <mat-option value="true">Disponible</mat-option>
+        <mat-option value="false">No disponible</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <button mat-flat-button color="primary" (click)="cargar()">
+      <mat-icon>search</mat-icon>
+      Buscar
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="state"><mat-spinner [diameter]="40"></mat-spinner></div>
+  } @else if (profesionales().length === 0) {
+    <div class="state empty">
+      <mat-icon>person_off</mat-icon>
+      <p>No hay profesionales que coincidan con la búsqueda.</p>
+    </div>
+  } @else {
+    <table mat-table [dataSource]="profesionales()" class="mat-elevation-z1 tabla">
+      <ng-container matColumnDef="nombre">
+        <th mat-header-cell *matHeaderCellDef>Nombre completo</th>
+        <td mat-cell *matCellDef="let p">{{ p.usuario?.nombre }} {{ p.usuario?.apellidos }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="titulo">
+        <th mat-header-cell *matHeaderCellDef>Título</th>
+        <td mat-cell *matCellDef="let p">{{ p.titulo }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="modalidad">
+        <th mat-header-cell *matHeaderCellDef>Modalidad</th>
+        <td mat-cell *matCellDef="let p">{{ p.modalidad }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="tarifa">
+        <th mat-header-cell *matHeaderCellDef>Tarifa base</th>
+        <td mat-cell *matCellDef="let p">₡{{ p.tarifaBase }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="disponibilidad">
+        <th mat-header-cell *matHeaderCellDef>Disponibilidad</th>
+        <td mat-cell *matCellDef="let p">
+          <span class="badge" [class.on]="p.disponibilidad" [class.off]="!p.disponibilidad">
+            {{ p.disponibilidad ? 'Disponible' : 'No disponible' }}
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef>Acciones</th>
+        <td mat-cell *matCellDef="let p">
+          <a mat-icon-button color="primary" [routerLink]="['/admin/profesionales', p.idPerfilProfesional]"
+             matTooltip="Ver detalle">
+            <mat-icon>visibility</mat-icon>
+          </a>
+          <a mat-icon-button [routerLink]="['/admin/profesionales/editar', p.idPerfilProfesional]"
+             matTooltip="Editar">
+            <mat-icon>edit</mat-icon>
+          </a>
+          <button mat-icon-button (click)="cambiarDisponibilidad(p)"
+                  [matTooltip]="p.disponibilidad ? 'Marcar no disponible' : 'Marcar disponible'">
+            <mat-icon>{{ p.disponibilidad ? 'event_busy' : 'event_available' }}</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  }
+</div>

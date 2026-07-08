@@ -1,0 +1,51 @@
+<div class="page">
+  <div class="detail-top">
+    <a mat-stroked-button routerLink="/admin/profesionales">
+      <mat-icon>arrow_back</mat-icon> Volver
+    </a>
+  </div>
+
+  @if (loading()) {
+    <div class="state"><mat-spinner [diameter]="40"></mat-spinner></div>
+  } @else if (profesional(); as p) {
+    <mat-card class="detail-card">
+      <div class="detail-header">
+        <div>
+          <h1>{{ p.usuario?.nombre }} {{ p.usuario?.apellidos }}</h1>
+          <p class="titulo">{{ p.titulo }}</p>
+        </div>
+        <span class="badge" [class.on]="p.disponibilidad" [class.off]="!p.disponibilidad">
+          {{ p.disponibilidad ? 'Disponible' : 'No disponible' }}
+        </span>
+      </div>
+
+      <p class="descripcion">{{ p.descripcion }}</p>
+
+      <div class="grid">
+        <div><span class="label">Correo</span>{{ p.usuario?.correo }}</div>
+        <div><span class="label">Modalidad</span>{{ p.modalidad }}</div>
+        <div><span class="label">Años de experiencia</span>{{ p.annosExperiencia }}</div>
+        <div><span class="label">Tarifa base</span>₡{{ p.tarifaBase }}</div>
+        <div><span class="label">Ubicación</span>{{ p.provincia }}, {{ p.canton }}, {{ p.distrito }}</div>
+      </div>
+
+      <div class="especialidades">
+        <span class="label">Especialidades</span>
+        @if (p.especialidades && p.especialidades.length > 0) {
+          <mat-chip-set>
+            @for (esp of p.especialidades; track esp.especialidad?.nombre) {
+              <mat-chip>{{ esp.especialidad?.nombre }}</mat-chip>
+            }
+          </mat-chip-set>
+        } @else {
+          <p class="muted">Sin especialidades asociadas.</p>
+        }
+      </div>
+    </mat-card>
+  } @else {
+    <div class="state empty">
+      <mat-icon>person_off</mat-icon>
+      <p>No se encontró el profesional.</p>
+    </div>
+  }
+</div>

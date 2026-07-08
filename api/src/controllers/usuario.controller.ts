@@ -6,9 +6,8 @@ import { Rol } from "../../generated/prisma/enums";
 export const usuarioController = {
   listar: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { search, rolUsuario } = req.query;
+      const { search, rol } = req.query;
 
-      // El service espera la clave 'rol'
       const filtros: { search?: string; rol?: Rol } = {};
 
       if (typeof search === "string" && search.trim() !== "") {
@@ -16,8 +15,8 @@ export const usuarioController = {
       }
 
       // Validamos que el rol recibido en la query realmente pertenezca al Enum de Prisma antes de asignarlo
-      if (typeof rolUsuario === "string" && Object.values(Rol).includes(rolUsuario as Rol)) {
-        filtros.rol = rolUsuario as Rol;
+      if (typeof rol === "string" && Object.values(Rol).includes(rol as Rol)) {
+        filtros.rol = rol as Rol;
       }
 
       const usuarios = await usuarioService.listar(filtros);

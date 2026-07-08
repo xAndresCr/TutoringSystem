@@ -38,6 +38,7 @@ export const profesionalService = {
       },
       // Usamos select para los datos que pide el Avance MiRey
       select: {
+        idPerfilProfesional: true, // Necesario para ver detalle y cambiar disponibilidad
         titulo: true,          // Título profesional
         modalidad: true,       // Modalidad
         tarifaBase: true,      // Tarifa base
