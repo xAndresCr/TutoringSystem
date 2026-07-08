@@ -1,5 +1,5 @@
 import { Modalidad } from './enums.model';
-import { Categoria } from './categoria.models';
+import { Categoria } from './categoria.model';
 import { Especialidad } from './especialidad.model';
 import { PerfilProfesional } from './perfil.profesional.model';
 
