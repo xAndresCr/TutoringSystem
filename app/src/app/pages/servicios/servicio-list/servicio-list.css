@@ -1,0 +1,65 @@
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.eyebrow {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.6;
+}
+
+.admin-filters {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.admin-filters mat-form-field {
+  min-width: 160px;
+}
+
+.summary {
+  font-size: 13px;
+  opacity: 0.7;
+  margin-bottom: 12px;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  border-radius: 8px;
+}
+
+.admin-table { width: 100%; }
+
+.cell-nombre {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 0;
+}
+
+.cell-nombre strong { display: block; font-size: 14px; font-weight: 600; }
+.cell-nombre small  { display: block; font-size: 12px; opacity: 0.6; }
+
+.chip-activo   { background-color: #2e7d32 !important; color: white !important; }
+.chip-inactivo { background-color: #c62828 !important; color: white !important; }
+.chip-modalidad { font-size: 11px !important; }
+
+.acciones { display: flex; gap: 4px; align-items: center; }
+
+.state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 48px;
+  opacity: 0.6;
+}
+
+.state.error { color: #c62828; opacity: 1; }
