@@ -25,8 +25,8 @@ export class ServicioService {
   }
 
   crear(data: ServicioCreateDto) {
-    return this.http.post<ApiResponse<Servicio>>(this.apiUrl, data);
-  }
+  return this.http.post<ApiResponse<Servicio>>(this.apiUrl, data);
+}
 
   actualizar(id: number, data: ServicioUpdateDto) {
     return this.http.put<ApiResponse<Servicio>>(`${this.apiUrl}/${id}`, data);

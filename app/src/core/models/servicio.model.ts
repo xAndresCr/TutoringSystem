@@ -34,7 +34,7 @@ export interface ServicioCreateDto {
   modalidad: Modalidad;
   idProfesional: number;
   idCategoria: number;
-  especialidades?: number[]; // ids de especialidades
+  especialidadIds?: number[]; 
 }
 
 export interface ServicioUpdateDto {

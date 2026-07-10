@@ -1,1 +1,155 @@
-<p>servicio-edit-page works!</p>
+<section class="form-header">
+  <button mat-icon-button routerLink="/admin/servicios">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <div>
+    <span class="eyebrow">Administración · Servicios</span>
+    <h1>Editar Servicio</h1>
+  </div>
+</section>
+
+@if (cargando()) {
+  <div class="state">
+    <mat-spinner diameter="42" />
+    <p>Cargando información del servicio...</p>
+  </div>
+} @else if (error()) {
+  <div class="state error">
+    <mat-icon>error</mat-icon>
+    <p>{{ error() }}</p>
+  </div>
+} @else {
+  <form [formGroup]="form" (ngSubmit)="guardar()" class="form-card">
+
+    <h2 class="section-title">Información general</h2>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Nombre del servicio</mat-label>
+        <input matInput formControlName="nombre" />
+        @if (hasError('nombre', 'required')) {
+          <mat-error>El nombre es obligatorio.</mat-error>
+        } @else if (hasError('nombre', 'minlength')) {
+          <mat-error>Mínimo 3 caracteres.</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Descripción</mat-label>
+        <textarea matInput formControlName="descripcion" rows="3"></textarea>
+        @if (hasError('descripcion', 'required')) {
+          <mat-error>La descripción es obligatoria.</mat-error>
+        } @else if (hasError('descripcion', 'minlength')) {
+          <mat-error>Mínimo 10 caracteres.</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div class="form-row two-cols">
+      <mat-form-field appearance="outline">
+        <mat-label>Precio (₡)</mat-label>
+        <input matInput type="number" formControlName="precio" />
+        @if (hasError('precio', 'required')) {
+          <mat-error>El precio es obligatorio.</mat-error>
+        } @else if (hasError('precio', 'min')) {
+          <mat-error>Debe ser mayor a 0.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Duración (minutos)</mat-label>
+        <input matInput type="number" formControlName="duracionMinutos" />
+        @if (hasError('duracionMinutos', 'required')) {
+          <mat-error>La duración es obligatoria.</mat-error>
+        } @else if (hasError('duracionMinutos', 'min')) {
+          <mat-error>Debe ser mayor a 0.</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div class="form-row two-cols">
+      <mat-form-field appearance="outline">
+        <mat-label>Modalidad</mat-label>
+        <mat-select formControlName="modalidad">
+          @for (mod of modalidades; track mod) {
+            <mat-option [value]="mod">{{ modalidadLabels[mod] }}</mat-option>
+          }
+        </mat-select>
+        @if (hasError('modalidad', 'required')) {
+          <mat-error>La modalidad es obligatoria.</mat-error>
+        }
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Categoría</mat-label>
+        <mat-select formControlName="idCategoria">
+          @for (cat of categorias(); track cat.idCategoria) {
+            <mat-option [value]="cat.idCategoria">{{ cat.nombre }}</mat-option>
+          }
+        </mat-select>
+        @if (hasError('idCategoria', 'required')) {
+          <mat-error>La categoría es obligatoria.</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Profesional</mat-label>
+        <mat-select formControlName="idProfesional">
+          @for (prof of profesionales(); track prof.idPerfilProfesional) {
+            <mat-option [value]="prof.idPerfilProfesional">
+              {{ prof.usuario?.nombre }} {{ prof.usuario?.apellidos }} — {{ prof.titulo }}
+            </mat-option>
+          }
+        </mat-select>
+        @if (hasError('idProfesional', 'required')) {
+          <mat-error>El profesional es obligatorio.</mat-error>
+        }
+      </mat-form-field>
+    </div>
+
+    <h2 class="section-title">Especialidades asociadas</h2>
+    <p class="section-hint">Selecciona las especialidades que aplican a este servicio.</p>
+
+    <div class="especialidades-grid">
+      @for (esp of especialidades(); track esp.idEspecialidad) {
+        <div class="especialidad-item"
+          [class.selected]="estaSeleccionada(esp.idEspecialidad)"
+          (click)="toggleEspecialidad(esp.idEspecialidad)">
+          <mat-checkbox
+            [checked]="estaSeleccionada(esp.idEspecialidad)"
+            (click)="$event.stopPropagation()">
+            {{ esp.nombre }}
+          </mat-checkbox>
+        </div>
+      }
+    </div>
+
+    <h2 class="section-title">Estado</h2>
+    <div class="form-row">
+      <mat-checkbox formControlName="estado">
+        Servicio activo
+      </mat-checkbox>
+    </div>
+
+    <div class="form-actions">
+      <button mat-stroked-button type="button" routerLink="/admin/servicios">
+        Cancelar
+      </button>
+      <button mat-flat-button color="primary" type="submit" [disabled]="guardando()">
+        @if (guardando()) {
+          <mat-spinner diameter="20" />
+        } @else {
+          <ng-container>
+            <mat-icon>save</mat-icon>
+            Guardar cambios
+          </ng-container>
+        }
+      </button>
+    </div>
+
+  </form>
+}
