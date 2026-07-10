@@ -1,1 +1,139 @@
-<p>cita-create-page works!</p>
+<section class="form-header">
+  <button mat-icon-button routerLink="/admin/citas">
+    <mat-icon>arrow_back</mat-icon>
+  </button>
+  <div>
+    <span class="eyebrow">Citas</span>
+    <h1>Registrar Nueva Cita</h1>
+  </div>
+</section>
+
+<form [formGroup]="form" (ngSubmit)="guardar()" class="form-card">
+
+  <h2 class="section-title">Participantes</h2>
+
+  <div class="form-row two-cols">
+    <mat-form-field appearance="outline">
+      <mat-label>Cliente</mat-label>
+      <mat-select formControlName="idCliente">
+        @for (c of clientes(); track c.idUsuario) {
+          <mat-option [value]="c.idUsuario">
+            {{ c.nombre }} {{ c.apellidos }}
+          </mat-option>
+        }
+      </mat-select>
+      @if (hasError('idCliente', 'required')) {
+        <mat-error>El cliente es obligatorio.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Profesional</mat-label>
+      <mat-select formControlName="idProfesional">
+        @for (p of profesionales(); track p.idPerfilProfesional) {
+          <mat-option [value]="p.idPerfilProfesional">
+            {{ p.usuario?.nombre }} {{ p.usuario?.apellidos }}
+          </mat-option>
+        }
+      </mat-select>
+      @if (hasError('idProfesional', 'required')) {
+        <mat-error>El profesional es obligatorio.</mat-error>
+      }
+    </mat-form-field>
+  </div>
+
+  <div class="form-row">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Servicio</mat-label>
+      <mat-select formControlName="idServicio">
+        @for (s of servicios(); track s.idServicio) {
+          <mat-option [value]="s.idServicio">
+            {{ s.nombre }} — ₡{{ s.precio }}
+          </mat-option>
+        }
+      </mat-select>
+      @if (hasError('idServicio', 'required')) {
+        <mat-error>El servicio es obligatorio.</mat-error>
+      }
+    </mat-form-field>
+  </div>
+
+  <h2 class="section-title">Fecha y hora</h2>
+
+  <div class="form-row three-cols">
+    <mat-form-field appearance="outline">
+      <mat-label>Fecha solicitada</mat-label>
+      <input matInput type="date" formControlName="fechaSolicitada" />
+      @if (hasError('fechaSolicitada', 'required')) {
+        <mat-error>La fecha es obligatoria.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Hora de inicio</mat-label>
+      <input matInput type="time" formControlName="horaInicio" />
+      @if (hasError('horaInicio', 'required')) {
+        <mat-error>La hora de inicio es obligatoria.</mat-error>
+      }
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Hora de finalización</mat-label>
+      <input matInput type="time" formControlName="horaFinalizacion" />
+      @if (hasError('horaFinalizacion', 'required')) {
+        <mat-error>La hora de finalización es obligatoria.</mat-error>
+      }
+    </mat-form-field>
+  </div>
+
+  <h2 class="section-title">Detalles de la sesión</h2>
+
+  <div class="form-row">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Modalidad</mat-label>
+      <mat-select formControlName="modalidad">
+        @for (mod of modalidades; track mod) {
+          <mat-option [value]="mod">{{ modalidadLabels[mod] }}</mat-option>
+        }
+      </mat-select>
+      @if (hasError('modalidad', 'required')) {
+        <mat-error>La modalidad es obligatoria.</mat-error>
+      }
+    </mat-form-field>
+  </div>
+
+  <div class="form-row">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Descripción de la necesidad</mat-label>
+      <textarea matInput formControlName="descripcionCita" rows="4"
+        placeholder="Describe qué temas necesitas trabajar en esta tutoría..."></textarea>
+      @if (hasError('descripcionCita', 'required')) {
+        <mat-error>La descripción es obligatoria.</mat-error>
+      } @else if (hasError('descripcionCita', 'minlength')) {
+        <mat-error>Mínimo 5 caracteres.</mat-error>
+      }
+    </mat-form-field>
+  </div>
+
+  <div class="estado-info">
+    <mat-icon>info</mat-icon>
+    <span>El estado se asignará automáticamente como <strong>Pendiente</strong> al registrar la cita.</span>
+  </div>
+
+  <div class="form-actions">
+    <button mat-stroked-button type="button" routerLink="/admin/citas">
+      Cancelar
+    </button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="guardando()">
+      @if (guardando()) {
+        <mat-spinner diameter="20" />
+      } @else {
+        <ng-container>
+          <mat-icon>event</mat-icon>
+          Registrar cita
+        </ng-container>
+      }
+    </button>
+  </div>
+
+</form>
