@@ -1,13 +1,46 @@
-<section class="hero">
-  <h1>Encuentra al tutor ideal para lo que necesitas aprender</h1>
-  <p>Explora profesionales por especialidad, revisa sus servicios y reserva una cita.</p>
-  <div class="hero-actions">
-    <a mat-flat-button color="primary" routerLink="/profesionales">
-      <mat-icon>school</mat-icon> Ver profesionales
-    </a>
-    <a mat-stroked-button color="primary" routerLink="/servicios">
-      <mat-icon>menu_book</mat-icon> Ver servicios
-    </a>
+<header class="home-intro">
+  <span class="eyebrow">Plataforma de tutorías</span>
+  <h1 class="home-title">
+    Aprende con los mejores <span class="accent">tutores</span>
+  </h1>
+  <p class="home-subtitle">
+    Conecta con profesionales verificados y reserva tu próxima clase en minutos.
+  </p>
+</header>
+
+<section class="banner" (mouseenter)="detenerAuto()" (mouseleave)="iniciarAuto()">
+  @for (slide of slides; track slide.image; let i = $index) {
+    <div class="slide" [class.activa]="i === actual()"
+         [style.backgroundImage]="'url(' + slide.image + ')'">
+      <div class="slide-overlay">
+        <div class="slide-content">
+          <h2>{{ slide.titulo }}</h2>
+          <p>{{ slide.subtitulo }}</p>
+          <div class="banner-actions">
+            <a mat-flat-button color="primary" routerLink="/profesionales">
+              <mat-icon>school</mat-icon> Ver profesionales
+            </a>
+            <a mat-stroked-button routerLink="/servicios">
+              <mat-icon>menu_book</mat-icon> Ver servicios
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+
+  <button class="nav prev" type="button" (click)="anterior()" aria-label="Anterior">
+    <mat-icon>chevron_left</mat-icon>
+  </button>
+  <button class="nav next" type="button" (click)="siguiente()" aria-label="Siguiente">
+    <mat-icon>chevron_right</mat-icon>
+  </button>
+
+  <div class="dots">
+    @for (slide of slides; track slide.image; let i = $index) {
+      <button type="button" class="dot" [class.activa]="i === actual()"
+              (click)="irA(i)" [attr.aria-label]="'Ir al slide ' + (i + 1)"></button>
+    }
   </div>
 </section>
 

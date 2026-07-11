@@ -11,6 +11,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { PerfilProfesionalService } from '../../../../core/services/perfil-profesional.service';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { ImageService } from '../../../../core/services/image.service';
 import { PerfilProfesionalUpdateDto } from '../../../../core/models/perfil.profesional.model';
 
 @Component({
@@ -35,12 +36,15 @@ export class ProfesionalEdit implements OnInit {
   private fb = inject(FormBuilder);
   private route = inject(ActivatedRoute);
   private profesionalService = inject(PerfilProfesionalService);
+  private imageService = inject(ImageService); // ← nuevo
   private notif = inject(NotificationService);
   private router = inject(Router);
 
   private id = 0;
   cargando = signal(true);
   guardando = signal(false);
+  subiendoImagen = signal(false);          // ← nuevo
+  previewUrl = signal<string | null>(null); // ← nuevo
 
   form = this.fb.group({
     titulo: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
@@ -52,6 +56,7 @@ export class ProfesionalEdit implements OnInit {
     canton: ['', [Validators.required, Validators.maxLength(60)]],
     distrito: ['', [Validators.required, Validators.maxLength(60)]],
     disponibilidad: [true],
+    imagen: [''],   // ← nuevo
   });
 
   ngOnInit(): void {
@@ -75,7 +80,11 @@ export class ProfesionalEdit implements OnInit {
           canton: p.canton,
           distrito: p.distrito,
           disponibilidad: p.disponibilidad,
+          imagen: p.imagen ?? '',   // ← nuevo
         });
+        if (p.imagen) {              // ← nuevo: muestra la foto actual
+          this.previewUrl.set(this.imageService.getImageUrl(p.imagen));
+        }
         this.cargando.set(false);
       },
       error: () => {
@@ -83,6 +92,40 @@ export class ProfesionalEdit implements OnInit {
         this.notif.error('No se pudo cargar el profesional');
       },
     });
+  }
+
+  // ← nuevo: sube la nueva imagen y borra la anterior (previousFileName)
+  onImagenSeleccionada(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file) return;
+
+    const tiposOk = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!tiposOk.includes(file.type)) {
+      this.notif.error('Formato no permitido. Usa JPG, PNG o WEBP.');
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      this.notif.error('La imagen supera el máximo de 2 MB.');
+      return;
+    }
+
+    const anterior = this.form.controls.imagen.value || null;
+
+    this.subiendoImagen.set(true);
+    this.imageService.upload(file, anterior).subscribe({
+      next: (res) => {
+        this.form.controls.imagen.setValue(res.fileName);
+        this.previewUrl.set(this.imageService.getImageUrl(res.fileName));
+        this.subiendoImagen.set(false);
+        this.notif.success('Imagen actualizada');
+      },
+      error: (err) => {
+        this.subiendoImagen.set(false);
+        this.notif.error(err?.error?.message ?? 'No se pudo subir la imagen');
+      },
+    });
+    input.value = '';
   }
 
   guardar(): void {
@@ -104,6 +147,7 @@ export class ProfesionalEdit implements OnInit {
       canton: v.canton!,
       distrito: v.distrito!,
       disponibilidad: v.disponibilidad ?? true,
+      imagen: v.imagen || null,   // ← nuevo
     };
 
     this.profesionalService.actualizar(this.id, dto).subscribe({

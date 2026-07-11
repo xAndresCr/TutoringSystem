@@ -8,6 +8,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { PerfilProfesionalService } from '../../../../core/services/perfil-profesional.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 import { PerfilProfesional } from '../../../../core/models/perfil.profesional.model';
+import { ImageService } from '../../../../core/services/image.service';
 
 @Component({
   selector: 'app-profesional-detail',
@@ -27,9 +28,13 @@ export class ProfesionalDetail implements OnInit {
   private route = inject(ActivatedRoute);
   private profesionalService = inject(PerfilProfesionalService);
   private notif = inject(NotificationService);
-
+  private imageService = inject(ImageService);
   profesional = signal<PerfilProfesional | null>(null);
   loading = signal(false);
+
+  imageUrl(fileName?: string | null): string {
+    return this.imageService.getImageUrl(fileName);
+  }
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -37,6 +42,8 @@ export class ProfesionalDetail implements OnInit {
       this.notif.error('Profesional no válido');
       return;
     }
+
+    
 
     this.loading.set(true);
     this.profesionalService.obtenerPorId(id).subscribe({

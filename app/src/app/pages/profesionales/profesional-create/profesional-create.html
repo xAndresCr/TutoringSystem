@@ -138,10 +138,31 @@
           }
         </mat-form-field>
 
-        <mat-form-field appearance="outline">
-          <mat-label>Imagen (URL, opcional)</mat-label>
-          <input matInput formControlName="imagen" maxlength="255" />
-        </mat-form-field>
+        <div class="imagen-uploader">
+  <span class="label">Imagen de perfil</span>
+  <div class="uploader-row">
+    @if (previewUrl()) {
+      <img [src]="previewUrl()" alt="Vista previa" class="preview" />
+    } @else {
+      <div class="preview placeholder"><mat-icon>image</mat-icon></div>
+    }
+    <div class="uploader-actions">
+      <input #fileInput type="file" hidden
+             accept="image/png,image/jpeg,image/webp"
+             (change)="onImagenSeleccionada($event)" />
+      <button mat-stroked-button type="button"
+              (click)="fileInput.click()" [disabled]="subiendoImagen()">
+        @if (subiendoImagen()) {
+          <mat-spinner [diameter]="18" />
+        } @else {
+          <mat-icon>upload</mat-icon>
+        }
+        {{ previewUrl() ? 'Cambiar imagen' : 'Subir imagen' }}
+      </button>
+      <small class="hint">JPG, PNG o WEBP · máx 2 MB</small>
+    </div>
+  </div>
+</div>
 
         <mat-form-field appearance="outline">
           <mat-label>Especialidades</mat-label>

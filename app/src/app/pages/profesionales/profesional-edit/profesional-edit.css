@@ -11,3 +11,12 @@
 mat-checkbox { display: block; margin: 0.75rem 0 0; }
 .actions { display: flex; gap: 0.75rem; justify-content: flex-end; margin-top: 1.5rem; }
 .state { display: flex; justify-content: center; padding: 3rem 0; }
+
+
+.imagen-uploader { display: flex; flex-direction: column; gap: .5rem; }
+.imagen-uploader .label { font-size: .75rem; text-transform: uppercase; opacity: .6; }
+.uploader-row { display: flex; align-items: center; gap: 1rem; }
+.preview { width: 96px; height: 96px; border-radius: 12px; object-fit: cover; border: 1px solid rgba(255,255,255,.15); }
+.preview.placeholder { display: flex; align-items: center; justify-content: center; opacity: .5; background: rgba(255,255,255,.06); }
+.uploader-actions { display: flex; flex-direction: column; gap: .35rem; }
+.hint { opacity: .6; }

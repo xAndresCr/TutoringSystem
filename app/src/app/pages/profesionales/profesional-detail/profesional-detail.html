@@ -10,15 +10,23 @@
   } @else if (profesional(); as p) {
     <mat-card class="detail-card">
       <div class="detail-header">
-        <div>
-          <h1>{{ p.usuario?.nombre }} {{ p.usuario?.apellidos }}</h1>
-          <p class="titulo">{{ p.titulo }}</p>
-        </div>
-        <span class="badge" [class.on]="p.disponibilidad" [class.off]="!p.disponibilidad">
-          {{ p.disponibilidad ? 'Disponible' : 'No disponible' }}
-        </span>
-      </div>
-
+  <div class="header-left">
+    @if (p.imagen) {
+      <mat-card class="avatar-card">
+      <img [src]="imageUrl(p.imagen)" [alt]="p.usuario?.nombre" class="avatar" />
+      </mat-card>
+    } @else {
+      <div class="avatar placeholder"><mat-icon>person</mat-icon></div>
+    }
+    <div>
+      <h1>{{ p.usuario?.nombre }} {{ p.usuario?.apellidos }}</h1>
+      <p class="titulo">{{ p.titulo }}</p>
+    </div>
+  </div>
+  <span class="badge" [class.on]="p.disponibilidad" [class.off]="!p.disponibilidad">
+    {{ p.disponibilidad ? 'Disponible' : 'No disponible' }}
+  </span>
+</div>
       <p class="descripcion">{{ p.descripcion }}</p>
 
       <div class="grid">

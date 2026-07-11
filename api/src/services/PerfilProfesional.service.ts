@@ -42,7 +42,8 @@ export const profesionalService = {
         titulo: true,          // Título profesional
         modalidad: true,       // Modalidad
         tarifaBase: true,      // Tarifa base
-        disponibilidad: true,  // Disponibilidad
+        disponibilidad: true, 
+        imagen: true, // Imagen
         usuario: {
           select: {
             nombre: true,      // Parte del Nombre Completo
@@ -64,6 +65,7 @@ export const profesionalService = {
         annosExperiencia: true,
         tarifaBase: true,
         disponibilidad: true,
+         imagen: true,
         modalidad: true,
         provincia: true,
         canton: true,
