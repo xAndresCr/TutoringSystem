@@ -10,7 +10,7 @@
 
 <form [formGroup]="form" (ngSubmit)="guardar()" class="form-card">
 
-  <h2 class="section-title">Participantes</h2>
+  <h2 class="section-title">1. Cliente y servicio</h2>
 
   <div class="form-row two-cols">
     <mat-form-field appearance="outline">
@@ -28,27 +28,11 @@
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-      <mat-label>Profesional</mat-label>
-      <mat-select formControlName="idProfesional">
-        @for (p of profesionales(); track p.idPerfilProfesional) {
-          <mat-option [value]="p.idPerfilProfesional">
-            {{ p.usuario?.nombre }} {{ p.usuario?.apellidos }}
-          </mat-option>
-        }
-      </mat-select>
-      @if (hasError('idProfesional', 'required')) {
-        <mat-error>El profesional es obligatorio.</mat-error>
-      }
-    </mat-form-field>
-  </div>
-
-  <div class="form-row">
-    <mat-form-field appearance="outline" class="full-width">
       <mat-label>Servicio</mat-label>
       <mat-select formControlName="idServicio">
         @for (s of servicios(); track s.idServicio) {
           <mat-option [value]="s.idServicio">
-            {{ s.nombre }} — ₡{{ s.precio }}
+            {{ s.nombre }} — ₡{{ s.precio }} · {{ s.duracionMinutos }} min
           </mat-option>
         }
       </mat-select>
@@ -58,12 +42,15 @@
     </mat-form-field>
   </div>
 
-  <h2 class="section-title">Fecha y hora</h2>
+  <h2 class="section-title">2. Fecha y hora</h2>
 
   <div class="form-row three-cols">
     <mat-form-field appearance="outline">
-      <mat-label>Fecha solicitada</mat-label>
-      <input matInput type="date" formControlName="fechaSolicitada" />
+      <mat-label>Fecha</mat-label>
+      <input matInput [matDatepicker]="picker" [min]="minDate" readonly
+        formControlName="fechaSolicitada" (click)="picker.open()" />
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
       @if (hasError('fechaSolicitada', 'required')) {
         <mat-error>La fecha es obligatoria.</mat-error>
       }
@@ -71,22 +58,65 @@
 
     <mat-form-field appearance="outline">
       <mat-label>Hora de inicio</mat-label>
-      <input matInput type="time" formControlName="horaInicio" />
+      <mat-select formControlName="horaInicio">
+        @for (h of horarios; track h.value) {
+          <mat-option [value]="h.value">{{ h.label }}</mat-option>
+        }
+      </mat-select>
       @if (hasError('horaInicio', 'required')) {
         <mat-error>La hora de inicio es obligatoria.</mat-error>
+      } @else if (hasError('horaInicio', 'fueraDeRango')) {
+        <mat-error>Con esta duración la cita terminaría después de las 7:00 p. m.</mat-error>
       }
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Hora de finalización</mat-label>
-      <input matInput type="time" formControlName="horaFinalizacion" />
-      @if (hasError('horaFinalizacion', 'required')) {
-        <mat-error>La hora de finalización es obligatoria.</mat-error>
-      }
+      <input matInput [value]="horaFinLabel() || '—'" readonly disabled />
     </mat-form-field>
   </div>
 
-  <h2 class="section-title">Detalles de la sesión</h2>
+  <p class="section-hint">
+    Las citas se agendan en bloques de 30 minutos, de 7:00 a. m. a 6:30 p. m. La hora de
+    finalización se calcula automáticamente según la duración del servicio.
+  </p>
+
+  <h2 class="section-title">3. Profesional disponible</h2>
+
+  @if (!puedeBuscarProfesionales) {
+    <div class="hint-box">
+      <mat-icon>info</mat-icon>
+      <span>Seleccione cliente, servicio, fecha y hora para ver los profesionales que pueden brindar este servicio.</span>
+    </div>
+  } @else if (cargandoProfesionales()) {
+    <div class="hint-box">
+      <mat-spinner diameter="20" />
+      <span>Buscando profesionales disponibles...</span>
+    </div>
+  } @else if (profesionales().length === 0) {
+    <div class="hint-box empty">
+      <mat-icon>person_off</mat-icon>
+      <span>Ningún profesional cumple con las especialidades del servicio o está libre en esa fecha y hora.</span>
+    </div>
+  } @else {
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Profesional</mat-label>
+        <mat-select formControlName="idProfesional">
+          @for (p of profesionales(); track p.idPerfilProfesional) {
+            <mat-option [value]="p.idPerfilProfesional">
+              {{ p.usuario?.nombre }} {{ p.usuario?.apellidos }} — {{ p.titulo }}
+            </mat-option>
+          }
+        </mat-select>
+        @if (hasError('idProfesional', 'required')) {
+          <mat-error>El profesional es obligatorio.</mat-error>
+        }
+      </mat-form-field>
+    </div>
+  }
+
+  <h2 class="section-title">4. Detalles de la sesión</h2>
 
   <div class="form-row">
     <mat-form-field appearance="outline" class="full-width">

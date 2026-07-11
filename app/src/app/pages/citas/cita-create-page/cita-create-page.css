@@ -62,3 +62,29 @@
   padding-top: 16px;
   border-top: 1px solid rgba(255,255,255,0.1);
 }
+.section-hint {
+  font-size: 12px;
+  opacity: 0.65;
+  margin: 4px 0 12px;
+}
+
+.hint-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+  font-size: 13px;
+  margin: 4px 0 12px;
+}
+
+.hint-box.empty {
+  background: rgba(220, 80, 80, 0.08);
+  border-color: rgba(220, 80, 80, 0.35);
+}
+
+.hint-box mat-icon {
+  opacity: 0.8;
+}

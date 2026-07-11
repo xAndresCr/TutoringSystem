@@ -100,8 +100,9 @@ export class ServicioEditPage implements OnInit {
           duracionMinutos: s.duracionMinutos,
           modalidad: s.modalidad,
           estado: s.estado,
-          idProfesional: s.idProfesional,
-          idCategoria: s.idCategoria,
+          // Se usa el id escalar; si no viniera, se toma del objeto relacionado
+          idProfesional: s.idProfesional ?? s.profesional?.idPerfilProfesional ?? null,
+          idCategoria: s.idCategoria ?? s.categoria?.idCategoria ?? null,
         });
 
         // Cargar especialidades seleccionadas
@@ -147,7 +148,7 @@ export class ServicioEditPage implements OnInit {
       estado: v.estado ?? true,
       idProfesional: v.idProfesional!,
       idCategoria: v.idCategoria!,
-      especialidades: this.especialidadesSeleccionadas(),
+      especialidadIds: this.especialidadesSeleccionadas(),
     }).subscribe({
       next: () => {
         this.notification.success('Servicio actualizado correctamente.', null, 3000, '/admin/servicios');

@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { ApiResponse } from '../models/api-response.model';
 import { Servicio, ServicioCreateDto, ServicioUpdateDto } from '../models/servicio.model';
+import { PerfilProfesional } from '../models/perfil.profesional.model';
 import { Modalidad } from '../models/enums.model';
 
 @Injectable({ providedIn: 'root' })
@@ -34,5 +35,17 @@ export class ServicioService {
 
   cambiarEstado(id: number) {
     return this.http.patch<ApiResponse<Servicio>>(`${this.apiUrl}/${id}/estado`, {});
+  }
+
+  // Profesionales que pueden brindar un servicio (según especialidades) y que
+  // están libres en la fecha/hora indicada (ambos parámetros opcionales).
+  profesionalesParaServicio(idServicio: number, fecha?: string, horaInicio?: string) {
+    let params: any = {};
+    if (fecha) params['fecha'] = fecha;
+    if (horaInicio) params['horaInicio'] = horaInicio;
+    return this.http.get<ApiResponse<PerfilProfesional[]>>(
+      `${this.apiUrl}/${idServicio}/profesionales`,
+      { params }
+    );
   }
 }

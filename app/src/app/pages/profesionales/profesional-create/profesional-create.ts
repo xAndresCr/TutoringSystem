@@ -1,5 +1,5 @@
 import { Component, OnInit, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -13,6 +13,19 @@ import { EspecialidadService } from '../../../../core/services/especialidad.serv
 import { NotificationService } from '../../../../core/services/notification.service';
 import { PerfilProfesionalCreateDto } from '../../../../core/models/perfil.profesional.model';
 import { Especialidad } from '../../../../core/models/especialidad.model';
+
+// Validador a nivel de formulario: la confirmación debe coincidir con la contraseña.
+// Se expone como error del grupo ('passwordMismatch') para no mutar los errores del
+// propio control (evita ciclos de validación). La plantilla lo muestra bajo el campo.
+function coincidenciaPassword(group: AbstractControl): ValidationErrors | null {
+  const password = group.get('password')?.value;
+  const confirmar = group.get('confirmarPassword')?.value;
+
+  // Si aún no se escribe la confirmación, deja que el validador 'required' actúe
+  if (!confirmar) return null;
+
+  return password === confirmar ? null : { passwordMismatch: true };
+}
 
 @Component({
   selector: 'app-profesional-create',
@@ -48,6 +61,7 @@ export class ProfesionalCreate implements OnInit {
     correo: ['', [Validators.required, Validators.email, Validators.maxLength(100)]],
     telefono: ['', [Validators.required, Validators.maxLength(20)]],
     password: ['', [Validators.required, Validators.minLength(8)]],
+    confirmarPassword: ['', [Validators.required]],
     // Datos del perfil
     titulo: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
     descripcion: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(255)]],
@@ -60,7 +74,7 @@ export class ProfesionalCreate implements OnInit {
     disponibilidad: [true],
     imagen: [''],
     especialidadIds: [[] as number[]],
-  });
+  }, { validators: coincidenciaPassword });
 
   ngOnInit(): void {
     this.especialidadService.listar({ estado: true }).subscribe({

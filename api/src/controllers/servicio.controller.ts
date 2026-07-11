@@ -81,6 +81,30 @@ export const servicioController = {
     }
   },
 
+  // 6. PROFESIONALES DISPONIBLES PARA UN SERVICIO
+  profesionalesDisponibles: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const id = Number(req.params.id);
+      const { fecha, horaInicio } = req.query;
+
+      const profesionales = await servicioService.profesionalesParaServicio(
+        id,
+        typeof fecha === "string" ? fecha : undefined,
+        typeof horaInicio === "string" ? horaInicio : undefined
+      );
+
+      if (profesionales === null) {
+        return res
+          .status(StatusCodes.NOT_FOUND)
+          .json({ success: false, message: "Servicio no encontrado." });
+      }
+
+      return res.status(StatusCodes.OK).json({ success: true, data: profesionales });
+    } catch (error) {
+      next(error);
+    }
+  },
+
   // 5. CAMBIAR ESTADO
   cambiarEstado: async (req: Request, res: Response, next: NextFunction) => {
     try {

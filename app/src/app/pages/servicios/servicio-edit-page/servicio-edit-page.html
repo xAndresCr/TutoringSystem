@@ -121,7 +121,8 @@
           (click)="toggleEspecialidad(esp.idEspecialidad)">
           <mat-checkbox
             [checked]="estaSeleccionada(esp.idEspecialidad)"
-            (click)="$event.stopPropagation()">
+            (click)="$event.stopPropagation()"
+            (change)="toggleEspecialidad(esp.idEspecialidad)">
             {{ esp.nombre }}
           </mat-checkbox>
         </div>

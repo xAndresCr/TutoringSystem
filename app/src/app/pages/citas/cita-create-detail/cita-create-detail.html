@@ -15,7 +15,7 @@
           <h1>{{ c.cliente?.nombre }} {{ c.cliente?.apellidos }}</h1>
           <p class="titulo">{{ c.servicio?.nombre }}</p>
         </div>
-        <mat-chip [class]="estadoClass(c.estado)">{{ estadoLabels[c.estado] }}</mat-chip>
+        <span class="badge" [class]="'badge ' + estadoClass(c.estado)">{{ estadoLabels[c.estado] }}</span>
       </div>
 
       <div class="grid">

@@ -54,6 +54,20 @@
             <mat-error>Debe tener al menos 8 caracteres</mat-error>
           }
         </mat-form-field>
+
+        <div class="field-with-note">
+          <mat-form-field appearance="outline">
+            <mat-label>Confirmar contraseña</mat-label>
+            <input matInput type="password" formControlName="confirmarPassword" />
+            @if (form.controls.confirmarPassword.hasError('required')) {
+              <mat-error>Debe confirmar la contraseña</mat-error>
+            }
+          </mat-form-field>
+          @if (form.hasError('passwordMismatch') && form.controls.confirmarPassword.touched
+               && !form.controls.confirmarPassword.hasError('required')) {
+            <p class="field-error">Las contraseñas no coinciden</p>
+          }
+        </div>
       </div>
 
       <h3>Datos del perfil</h3>

@@ -12,6 +12,7 @@ export class ServicioRoutes {
     const controller = servicioController;
 
     router.get("/", controller.listar);
+    router.get("/:id/profesionales", controller.profesionalesDisponibles);
     router.get("/:id", controller.obtenerPorId);
     router.post("/", validateRequest(createServicioSchema), controller.crear);
     router.put("/:id", validateRequest(updateServicioSchema), controller.editar);

@@ -46,5 +46,5 @@ export interface ServicioUpdateDto {
   modalidad?: Modalidad;
   idProfesional?: number;
   idCategoria?: number;
-  especialidades?: number[];
+  especialidadIds?: number[];
 }

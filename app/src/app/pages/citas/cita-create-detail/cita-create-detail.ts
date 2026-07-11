@@ -3,7 +3,6 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { CitaService } from '../../../../core/services/cita.service';
 import { NotificationService } from '../../../../core/services/notification.service';
@@ -18,7 +17,6 @@ import { EstadoCita } from '../../../../core/models/enums.model';
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    MatChipsModule,
     MatProgressSpinnerModule,
   ],
   templateUrl: './cita-create-detail.html',

@@ -1,5 +1,5 @@
 import { prisma } from "../config/prisma";
-import { Prisma } from "../../generated/prisma/client";
+import { Prisma, EstadoCita } from "../../generated/prisma/client";
 import { CreateServicioDto, UpdateServicioDto } from "../dtos/servicio.dto";
 
 export const servicioService = {
@@ -54,6 +54,7 @@ export const servicioService = {
         idServicio: true,
         nombre: true,
         precio: true,
+        duracionMinutos: true,
         modalidad: true,
         estado: true,
         categoria: {
@@ -89,6 +90,9 @@ export const servicioService = {
         duracionMinutos: true,
         modalidad: true,
         estado: true,
+        // IDs escalares necesarios para precargar los selects en el formulario de edición
+        idCategoria: true,
+        idProfesional: true,
         categoria: {
           select: {
             idCategoria: true,
@@ -143,14 +147,107 @@ export const servicioService = {
     return await prisma.servicio.create({ data });
   },
 
-  // 4. EDITAR SERVICIO
+  // 4. EDITAR SERVICIO (incluye re-sincronización de especialidades)
   async editar(idServicio: number, datos: UpdateServicioDto) {
-    // No se re-sincronizan especialidades en la edición (acción aparte)
     const { especialidadIds, ...servicio } = datos;
 
-    return await prisma.servicio.update({
+    // Todo dentro de una transacción para mantener consistencia entre el
+    // servicio y su tabla puente de especialidades.
+    return await prisma.$transaction(async (tx) => {
+      const actualizado = await tx.servicio.update({
+        where: { idServicio },
+        data: servicio as Prisma.ServicioUncheckedUpdateInput,
+      });
+
+      // Solo re-sincronizamos si el cliente envió el arreglo (aunque venga vacío).
+      // Si viene undefined, no se toca la relación existente.
+      if (especialidadIds !== undefined) {
+        // 1) Se borran los vínculos actuales del servicio
+        await tx.especialidadServicio.deleteMany({ where: { idServicio } });
+
+        // 2) Se crean los nuevos vínculos seleccionados
+        if (especialidadIds.length > 0) {
+          await tx.especialidadServicio.createMany({
+            data: especialidadIds.map((idEspecialidad) => ({
+              idServicio,
+              idEspecialidad,
+            })),
+          });
+        }
+      }
+
+      return actualizado;
+    });
+  },
+
+  // 6. PROFESIONALES QUE PUEDEN BRINDAR UN SERVICIO
+  //    Devuelve los profesionales disponibles cuyo perfil cubre TODAS las
+  //    especialidades exigidas por el servicio. Opcionalmente excluye a quienes
+  //    ya tienen una cita activa en la fecha/hora indicada.
+  async profesionalesParaServicio(
+    idServicio: number,
+    fecha?: string,
+    horaInicio?: string
+  ) {
+    const servicio = await prisma.servicio.findUnique({
       where: { idServicio },
-      data: servicio as Prisma.ServicioUncheckedUpdateInput,
+      select: {
+        idServicio: true,
+        especialidades: { select: { idEspecialidad: true } },
+      },
+    });
+
+    if (!servicio) return null;
+
+    const especialidadIds = servicio.especialidades.map((e) => e.idEspecialidad);
+
+    const where: Prisma.PerfilProfesionalWhereInput = {
+      disponibilidad: true,
+      usuario: { estado: true },
+    };
+
+    // El profesional debe tener TODAS las especialidades del servicio.
+    // Se traduce a un AND de condiciones "some" (una por cada especialidad).
+    if (especialidadIds.length > 0) {
+      where.AND = especialidadIds.map((idEspecialidad) => ({
+        especialidades: { some: { idEspecialidad } },
+      }));
+    }
+
+    // Filtro opcional de disponibilidad horaria: excluye profesionales con una
+    // cita activa (Pendiente o Aceptada) en esa misma fecha y hora de inicio.
+    if (fecha && horaInicio) {
+      const fechaDate = new Date(fecha);
+      const horaDate = new Date(horaInicio);
+      if (!isNaN(fechaDate.getTime()) && !isNaN(horaDate.getTime())) {
+        where.NOT = {
+          citas: {
+            some: {
+              fechaSolicitada: fechaDate,
+              horaInicio: horaDate,
+              estado: { in: [EstadoCita.PENDIENTE, EstadoCita.ACEPTADA] },
+            },
+          },
+        };
+      }
+    }
+
+    return await prisma.perfilProfesional.findMany({
+      where,
+      orderBy: { titulo: "asc" },
+      select: {
+        idPerfilProfesional: true,
+        titulo: true,
+        modalidad: true,
+        tarifaBase: true,
+        disponibilidad: true,
+        usuario: {
+          select: {
+            nombre: true,
+            apellidos: true,
+          },
+        },
+      },
     });
   },
 
