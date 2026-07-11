@@ -110,16 +110,16 @@
       <ng-container matColumnDef="modalidad">
         <th mat-header-cell *matHeaderCellDef>Modalidad</th>
         <td mat-cell *matCellDef="let s">
-          <mat-chip class="chip-modalidad">{{ getModalidadLabel(s.modalidad) }}</mat-chip>
+          <span class="badge neutral">{{ getModalidadLabel(s.modalidad) }}</span>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="estado">
         <th mat-header-cell *matHeaderCellDef>Estado</th>
         <td mat-cell *matCellDef="let s">
-          <mat-chip [class]="s.estado ? 'chip-activo' : 'chip-inactivo'">
+          <span class="badge" [class.on]="s.estado" [class.off]="!s.estado">
             {{ s.estado ? 'Activo' : 'Inactivo' }}
-          </mat-chip>
+          </span>
         </td>
       </ng-container>
 

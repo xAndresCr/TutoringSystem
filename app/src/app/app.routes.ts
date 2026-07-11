@@ -13,6 +13,9 @@ import { ServicioList } from './pages/servicios/servicio-list/servicio-list';
 import { ServicioCreatePage } from './pages/servicios/servicio-create-page/servicio-create-page';
 import { ServicioEditPage } from './pages/servicios/servicio-edit-page/servicio-edit-page';
 import { ServicioDetail } from './pages/servicios/servicio-detail/servicio-detail';
+import { CitaList } from './pages/citas/cita-list/cita-list';
+import { CitaCreatePage } from './pages/citas/cita-create-page/cita-create-page';
+import { CitaCreateDetail } from './pages/citas/cita-create-detail/cita-create-detail';
 
 export const routes: Routes = [
   {
@@ -37,7 +40,9 @@ export const routes: Routes = [
       { path: 'admin/servicios/:id', component: ServicioDetail, title: 'Detalle de servicio' },
       { path: 'admin/categorias', component: CategoriasList, title: 'Gestión de categorías' },
       { path: 'admin/especialidades', component: EspecialidadesList, title: 'Gestión de especialidades' },
-      { path: 'admin/citas', component: PlaceholderPage, title: 'Gestión de citas' },
+      { path: 'admin/citas', component: CitaList, title: 'Gestión de citas' },
+      { path: 'admin/citas/crear', component: CitaCreatePage, title: 'Registrar cita' },
+      { path: 'admin/citas/:id', component: CitaCreateDetail, title: 'Detalle de cita' },
       { path: 'admin/usuarios', component: UsuariosList, title: 'Gestión de usuarios' },
 
       // Cada dev reemplaza PlaceholderPage por su componente real y agrega

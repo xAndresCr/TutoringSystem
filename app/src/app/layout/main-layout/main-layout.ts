@@ -1,5 +1,11 @@
-import { Component, computed, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, computed, inject, signal } from '@angular/core';
+import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
+import { MatSidenavModule, MatSidenav } from '@angular/material/sidenav';
+import { MatListModule } from '@angular/material/list';
+import { MatIconModule } from '@angular/material/icon';
 import { Header } from '../header/header';
 import { Footer } from '../footer/footer';
 
@@ -20,11 +26,28 @@ interface User {
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [RouterOutlet, Header, Footer],
+  imports: [
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
+    MatSidenavModule,
+    MatListModule,
+    MatIconModule,
+    Header,
+    Footer,
+  ],
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.css',
 })
 export class MainLayout {
+  private breakpoints = inject(BreakpointObserver);
+
+  // true cuando el ancho es de escritorio (>= 981px)
+  isDesktop = toSignal(
+    this.breakpoints.observe('(min-width: 981px)').pipe(map((r) => r.matches)),
+    { initialValue: true },
+  );
+
   // Sesión demo (la autenticación real es de una etapa posterior)
   currentUser = signal<User | null>(null);
 
@@ -53,6 +76,11 @@ export class MainLayout {
     if (!item.roles) return true;
     const user = this.currentUser();
     return !!user && item.roles.includes(user.role);
+  }
+
+  // Cierra el menú tras navegar solo en móvil (modo over)
+  closeOnMobile(sidenav: MatSidenav): void {
+    if (!this.isDesktop()) sidenav.close();
   }
 
   loginAsClient(): void {

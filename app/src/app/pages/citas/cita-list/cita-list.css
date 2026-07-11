@@ -1,0 +1,42 @@
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.eyebrow {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.6;
+}
+.admin-filters {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.admin-filters mat-form-field { min-width: 160px; }
+.summary { font-size: 13px; opacity: 0.7; margin-bottom: 12px; }
+.table-wrapper { overflow-x: auto; border-radius: 8px; }
+.admin-table { width: 100%; }
+.acciones { display: flex; gap: 4px; align-items: center; }
+
+/* Pills con el mismo formato que el listado de categorías (span.badge) */
+.badge { padding: 0.2rem 0.6rem; border-radius: 999px; font-size: 0.78rem; font-weight: 500; }
+.estado-pendiente  { color: #e65100; background: #ffe0b2; }
+.estado-aceptada   { color: #0d47a1; background: #bbdefb; }
+.estado-completada { color: #1b5e20; background: #c8e6c9; }
+.estado-rechazada  { color: #b71c1c; background: #ffcdd2; }
+.estado-cancelada  { color: #424242; background: #e0e0e0; }
+
+.state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 48px;
+  opacity: 0.6;
+}
+.state.error { color: #c62828; opacity: 1; }

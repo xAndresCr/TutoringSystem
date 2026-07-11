@@ -1,1 +1,55 @@
-<p>servicio-detail works!</p>
+<div class="page">
+  <div class="detail-top">
+    <a mat-stroked-button routerLink="/admin/servicios">
+      <mat-icon>arrow_back</mat-icon> Volver
+    </a>
+  </div>
+
+  @if (loading()) {
+    <div class="state"><mat-spinner [diameter]="40"></mat-spinner></div>
+  } @else if (servicio(); as s) {
+    <mat-card class="detail-card">
+      <div class="detail-header">
+        <div>
+          <span class="eyebrow">Servicio</span>
+          <h1>{{ s.nombre }}</h1>
+          <p class="titulo">{{ s.categoria?.nombre || 'Sin categoría' }}</p>
+        </div>
+        <span class="badge" [class.on]="s.estado" [class.off]="!s.estado">
+          {{ s.estado ? 'Activo' : 'Inactivo' }}
+        </span>
+      </div>
+
+      <p class="descripcion">{{ s.descripcion }}</p>
+
+      <div class="grid">
+        <div>
+          <span class="label">Profesional</span>
+          {{ s.profesional?.usuario?.nombre }} {{ s.profesional?.usuario?.apellidos }}
+        </div>
+        <div><span class="label">Categoría</span>{{ s.categoria?.nombre || '—' }}</div>
+        <div><span class="label">Precio</span>₡{{ s.precio }}</div>
+        <div><span class="label">Duración</span>{{ s.duracionMinutos }} min</div>
+        <div><span class="label">Modalidad</span>{{ s.modalidad }}</div>
+      </div>
+
+      <div class="especialidades">
+        <span class="label">Especialidades</span>
+        @if (s.especialidades && s.especialidades.length > 0) {
+          <mat-chip-set>
+            @for (esp of s.especialidades; track esp.idEspecialidad) {
+              <mat-chip>{{ esp.especialidad?.nombre }}</mat-chip>
+            }
+          </mat-chip-set>
+        } @else {
+          <p class="muted">Sin especialidades asociadas.</p>
+        }
+      </div>
+    </mat-card>
+  } @else {
+    <div class="state empty">
+      <mat-icon>search_off</mat-icon>
+      <p>No se encontró el servicio.</p>
+    </div>
+  }
+</div>

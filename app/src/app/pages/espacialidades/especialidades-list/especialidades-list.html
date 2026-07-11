@@ -62,9 +62,9 @@
       <ng-container matColumnDef="estado">
         <th mat-header-cell *matHeaderCellDef>Estado</th>
         <td mat-cell *matCellDef="let esp">
-          <mat-chip [class]="esp.estado ? 'chip-activo' : 'chip-inactivo'">
+          <span class="badge" [class.on]="esp.estado" [class.off]="!esp.estado">
             {{ esp.estado ? 'Activo' : 'Inactivo' }}
-          </mat-chip>
+          </span>
         </td>
       </ng-container>
 

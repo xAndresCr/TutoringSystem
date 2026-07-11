@@ -1,16 +1,63 @@
-<div class="app-shell">
-  <app-header
-    [publicMenu]="publicMenu()"
-    [adminMaintenanceMenu]="adminMaintenanceMenu()"
-    [adminManagementMenu]="adminManagementMenu()"
-    [currentUser]="currentUser()"
-    [isAdmin]="isAdmin()"
-    [canShowItem]="canShowItem.bind(this)"
-    (loginClient)="loginAsClient()"
-    (loginAdmin)="loginAsAdmin()"
-    (logoutUser)="logout()" />
-  <main class="content">
-    <router-outlet />
-  </main>
-  <app-footer />
-</div>
+<mat-sidenav-container class="app-shell">
+  <mat-sidenav
+    #sidenav
+    class="sidenav"
+    [mode]="isDesktop() ? 'side' : 'over'"
+    [opened]="isDesktop()"
+    [disableClose]="isDesktop()">
+
+    <a class="sidenav-brand" routerLink="/" (click)="closeOnMobile(sidenav)">
+      <span class="brand-icon"><mat-icon>school</mat-icon></span>
+      <span class="brand-text">
+        <strong>TutoringSystem</strong>
+        <small>Marketplace de tutores</small>
+      </span>
+    </a>
+
+    <mat-nav-list class="nav">
+      @for (item of publicMenu(); track item.path) {
+        @if (canShowItem(item)) {
+          <a mat-list-item [routerLink]="item.path" routerLinkActive="active-link"
+             [routerLinkActiveOptions]="{ exact: item.path === '/' }"
+             (click)="closeOnMobile(sidenav)">
+            <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+            <span matListItemTitle>{{ item.label }}</span>
+          </a>
+        }
+      }
+
+      @if (isAdmin()) {
+        <h3 matSubheader>Mantenimientos</h3>
+        @for (item of adminMaintenanceMenu(); track item.path) {
+          <a mat-list-item [routerLink]="item.path" routerLinkActive="active-link"
+             (click)="closeOnMobile(sidenav)">
+            <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+            <span matListItemTitle>{{ item.label }}</span>
+          </a>
+        }
+
+        <h3 matSubheader>Gestión</h3>
+        @for (item of adminManagementMenu(); track item.path) {
+          <a mat-list-item [routerLink]="item.path" routerLinkActive="active-link"
+             (click)="closeOnMobile(sidenav)">
+            <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+            <span matListItemTitle>{{ item.label }}</span>
+          </a>
+        }
+      }
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="shell-content">
+    <app-header
+      [currentUser]="currentUser()"
+      (toggleSidenav)="sidenav.toggle()"
+      (loginClient)="loginAsClient()"
+      (loginAdmin)="loginAsAdmin()"
+      (logoutUser)="logout()" />
+    <main class="content">
+      <router-outlet />
+    </main>
+    <app-footer />
+  </mat-sidenav-content>
+</mat-sidenav-container>

@@ -1,1 +1,127 @@
-<p>cita-list works!</p>
+<section class="admin-header">
+  <div>
+    <span class="eyebrow">Administración</span>
+    <h1>Gestión de Citas</h1>
+  </div>
+  <button mat-flat-button color="primary" routerLink="/admin/citas/crear">
+    <mat-icon>add</mat-icon>
+    Nueva cita
+  </button>
+</section>
+
+<section class="admin-filters">
+  <mat-form-field appearance="outline">
+    <mat-label>Estado</mat-label>
+    <mat-select [ngModel]="filtroEstado()" (ngModelChange)="filtroEstado.set($event)">
+      <mat-option value="todos">Todos</mat-option>
+      @for (est of estados; track est) {
+        <mat-option [value]="est">{{ estadoLabels[est] }}</mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Profesional</mat-label>
+    <mat-select [ngModel]="filtroProfesional()" (ngModelChange)="filtroProfesional.set($event)">
+      <mat-option [value]="null">Todos</mat-option>
+      @for (p of profesionales(); track p.idPerfilProfesional) {
+        <mat-option [value]="p.idPerfilProfesional">
+          {{ p.usuario?.nombre }} {{ p.usuario?.apellidos }}
+        </mat-option>
+      }
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Desde</mat-label>
+    <input matInput type="date" [ngModel]="fechaDesde()"
+      (ngModelChange)="fechaDesde.set($event || null)" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Hasta</mat-label>
+    <input matInput type="date" [ngModel]="fechaHasta()"
+      (ngModelChange)="fechaHasta.set($event || null)" />
+  </mat-form-field>
+
+  <button mat-stroked-button (click)="limpiarFiltros()">
+    <mat-icon>clear</mat-icon>
+    Limpiar
+  </button>
+</section>
+
+<p class="summary">{{ total() }} citas encontradas</p>
+
+@if (loading()) {
+  <div class="state">
+    <mat-spinner diameter="42" />
+    <p>Cargando citas...</p>
+  </div>
+} @else if (error()) {
+  <div class="state error">
+    <mat-icon>error</mat-icon>
+    <p>{{ error() }}</p>
+  </div>
+} @else if (citasFiltradas().length === 0) {
+  <div class="state">
+    <mat-icon>event_busy</mat-icon>
+    <p>No se encontraron citas.</p>
+  </div>
+} @else {
+  <div class="table-wrapper">
+    <table mat-table [dataSource]="citasFiltradas()" class="admin-table">
+
+      <ng-container matColumnDef="cliente">
+        <th mat-header-cell *matHeaderCellDef>Cliente</th>
+        <td mat-cell *matCellDef="let c">
+          {{ c.cliente?.nombre }} {{ c.cliente?.apellidos }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="profesional">
+        <th mat-header-cell *matHeaderCellDef>Profesional</th>
+        <td mat-cell *matCellDef="let c">
+          {{ c.profesional?.usuario?.nombre }} {{ c.profesional?.usuario?.apellidos }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="servicio">
+        <th mat-header-cell *matHeaderCellDef>Servicio</th>
+        <td mat-cell *matCellDef="let c">{{ c.servicio?.nombre }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="fecha">
+        <th mat-header-cell *matHeaderCellDef>Fecha</th>
+        <td mat-cell *matCellDef="let c">{{ formatFecha(c.fechaSolicitada) }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="hora">
+        <th mat-header-cell *matHeaderCellDef>Hora</th>
+        <td mat-cell *matCellDef="let c">
+          {{ formatHora(c.horaInicio) }} - {{ formatHora(c.horaFinalizacion) }}
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="estado">
+        <th mat-header-cell *matHeaderCellDef>Estado</th>
+        <td mat-cell *matCellDef="let c">
+          <span [class]="'badge ' + estadoClass(c.estado)">{{ getEstadoLabel(c.estado) }}</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef>Acciones</th>
+        <td mat-cell *matCellDef="let c">
+          <button mat-icon-button color="primary"
+            [routerLink]="['/admin/citas', c.idCita]"
+            matTooltip="Ver detalle">
+            <mat-icon>visibility</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  </div>
+}

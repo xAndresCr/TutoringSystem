@@ -47,9 +47,10 @@
 .cell-nombre strong { display: block; font-size: 14px; font-weight: 600; }
 .cell-nombre small  { display: block; font-size: 12px; opacity: 0.6; }
 
-.chip-activo   { background-color: #2e7d32 !important; color: white !important; }
-.chip-inactivo { background-color: #c62828 !important; color: white !important; }
-.chip-modalidad { font-size: 11px !important; }
+.badge { padding: 0.2rem 0.6rem; border-radius: 999px; font-size: 0.78rem; font-weight: 500; }
+.badge.on { color: #1b5e20; background: #c8e6c9; }
+.badge.off { color: #b71c1c; background: #ffcdd2; }
+.badge.neutral { color: #37474f; background: #e0e0e0; }
 
 .acciones { display: flex; gap: 4px; align-items: center; }
 

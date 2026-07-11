@@ -1,1 +1,54 @@
-<p>cita-create-detail works!</p>
+<div class="page">
+  <div class="detail-top">
+    <a mat-stroked-button routerLink="/admin/citas">
+      <mat-icon>arrow_back</mat-icon> Volver
+    </a>
+  </div>
+
+  @if (loading()) {
+    <div class="state"><mat-spinner [diameter]="40"></mat-spinner></div>
+  } @else if (cita(); as c) {
+    <mat-card class="detail-card">
+      <div class="detail-header">
+        <div>
+          <span class="eyebrow">Cita</span>
+          <h1>{{ c.cliente?.nombre }} {{ c.cliente?.apellidos }}</h1>
+          <p class="titulo">{{ c.servicio?.nombre }}</p>
+        </div>
+        <mat-chip [class]="estadoClass(c.estado)">{{ estadoLabels[c.estado] }}</mat-chip>
+      </div>
+
+      <div class="grid">
+        <div><span class="label">Cliente</span>{{ c.cliente?.nombre }} {{ c.cliente?.apellidos }}</div>
+        <div><span class="label">Correo cliente</span>{{ c.cliente?.correo }}</div>
+        <div>
+          <span class="label">Profesional</span>
+          {{ c.profesional?.usuario?.nombre }} {{ c.profesional?.usuario?.apellidos }}
+          @if (c.profesional?.titulo) { <small> · {{ c.profesional?.titulo }}</small> }
+        </div>
+        <div><span class="label">Servicio</span>{{ c.servicio?.nombre }}</div>
+        <div><span class="label">Fecha</span>{{ formatFecha(c.fechaSolicitada) }}</div>
+        <div><span class="label">Hora</span>{{ formatHora(c.horaInicio) }} - {{ formatHora(c.horaFinalizacion) }}</div>
+        <div><span class="label">Modalidad</span>{{ c.modalidad }}</div>
+        <div><span class="label">Monto estimado</span>₡{{ c.montoTotal }}</div>
+      </div>
+
+      <div class="descripcion-block">
+        <span class="label">Descripción de la necesidad</span>
+        <p class="descripcion">{{ c.descripcionCita }}</p>
+      </div>
+
+      @if (c.comentarioProfesional) {
+        <div class="descripcion-block">
+          <span class="label">Comentario del profesional</span>
+          <p class="descripcion">{{ c.comentarioProfesional }}</p>
+        </div>
+      }
+    </mat-card>
+  } @else {
+    <div class="state empty">
+      <mat-icon>event_busy</mat-icon>
+      <p>No se encontró la cita.</p>
+    </div>
+  }
+</div>
