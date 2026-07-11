@@ -22,6 +22,10 @@ export class PerfilProfesionalService {
     return this.http.get<ApiResponse<PerfilProfesional>>(`${this.apiUrl}/${id}`);
   }
 
+  getImageUrl(imageName: string): string {
+    return `${environment.imageUrl}/${imageName}`;
+  }
+
   crear(data: PerfilProfesionalCreateDto) {
     return this.http.post<ApiResponse<PerfilProfesional>>(this.apiUrl, data);
   }

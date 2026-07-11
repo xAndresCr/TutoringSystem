@@ -49,5 +49,7 @@ export class ProfesionalDetail implements OnInit {
         this.notif.error('No se pudo cargar el profesional');
       },
     });
+
   }
+  
 }

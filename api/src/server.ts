@@ -4,6 +4,7 @@ import cors from "cors";
 import morgan from "morgan";
 import { AppRoutes } from "./routes/routes";
 import { ErrorMiddleware } from "./middlewares/error.middleware";
+import path from "path/win32";
 
 const app = express();
 // Acceder a la configuracion del archivo .env
@@ -12,7 +13,11 @@ dotenv.config();
 const port = process.env.PORT || 3000;
 // Middleware CORS para aceptar llamadas en el servido
 app.use(cors());
-// Middleware para loggear las llamadas al servidor
+// Middleware para loggear las llamadas al 
+
+app.use("/images",express.static(
+path.join(path.resolve(),"assets/uploads")))
+
 app.use(morgan("dev"));
 // Middleware para gestionar Requests y Response json
 app.use(express.json());

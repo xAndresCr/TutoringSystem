@@ -129,6 +129,7 @@ const perfileCarlos = await prisma.perfilProfesional.create({
     annosExperiencia: 8,
     tarifaBase: 15000,
     disponibilidad: true,
+    imagen: "thor.jpg",
     modalidad: Modalidad.VIRTUAL,
     provincia: "San José", canton: "Montes de Oca", distrito: "San Pedro",
      idUsuario: userMap["carlos.mendez@tutorias.cr"],

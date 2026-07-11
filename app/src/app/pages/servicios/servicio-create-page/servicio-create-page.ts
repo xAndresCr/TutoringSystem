@@ -17,6 +17,7 @@ import { CategoriaService } from '../../../../core/services/categoria.service';
 import { EspecialidadService } from '../../../../core/services/especialidad.service';
 import { PerfilProfesionalService } from '../../../../core/services/perfil-profesional.service';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { ImageService } from '../../../../core/services/image.service';
 
 @Component({
   selector: 'app-servicio-create-page',
@@ -42,6 +43,7 @@ export class ServicioCreatePage implements OnInit {
   private readonly categoriaService = inject(CategoriaService);
   private readonly especialidadService = inject(EspecialidadService);
   private readonly profesionalService = inject(PerfilProfesionalService);
+  private readonly imageService = inject(ImageService);
   private readonly notification = inject(NotificationService);
 
   categorias = signal<Categoria[]>([]);
@@ -108,6 +110,8 @@ export class ServicioCreatePage implements OnInit {
   estaSeleccionada(id: number): boolean {
     return this.especialidadesSeleccionadas().includes(id);
   }
+
+  
 
   guardar(): void {
     if (this.form.invalid) {
